@@ -45,3 +45,9 @@ func GetAllPanelData() ([]model.PanelAll, res.ResCode) {
 	panel := sqlite.GetPanelAllData()
 	return panel, res.CodeSuccess
 }
+
+// UpdatePanelEnvData 修改面板绑定变量
+func UpdatePanelEnvData(p *model.PanelEnvData) res.ResCode {
+	sqlite.UpdatePanelEnvData(p)
+	return res.CodeSuccess
+}

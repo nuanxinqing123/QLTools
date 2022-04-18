@@ -9,7 +9,6 @@ package routes
 import (
 	"QLPanelTools/bindata"
 	"QLPanelTools/controllers"
-	"QLPanelTools/logger"
 	"QLPanelTools/middleware"
 	assetfs "github.com/elazarl/go-bindata-assetfs"
 	"github.com/gin-gonic/gin"
@@ -24,9 +23,9 @@ func Setup() *gin.Engine {
 
 	// 配置中间件
 	{
-		r.Use(logger.GinLogger(), logger.GinRecovery(true))
+		//r.Use(logger.GinLogger(), logger.GinRecovery(true))
 		// 限流熔断
-		r.Use(middleware.RateLimitMiddleware(time.Minute, 300, 300)) // 每分钟限制300次请求, 超出熔断
+		r.Use(middleware.RateLimitMiddleware(time.Minute, 500, 500)) // 每分钟限制500次请求, 超出熔断
 	}
 
 	// 前端静态文件
@@ -65,7 +64,9 @@ func Setup() *gin.Engine {
 			open.POST("check/token", controllers.CheckToken)
 
 			// 可用服务器&可选变量名&可用数量
-			open.GET("env/data", controllers.EnvData)
+			//open.GET("env/data", controllers.EnvData)
+			// 可用服务
+			open.GET("index/data", controllers.IndexData)
 			// 上传变量
 			open.POST("env/add", controllers.EnvADD)
 		}
@@ -103,6 +104,8 @@ func Setup() *gin.Engine {
 			ad.DELETE("env/panel/del", controllers.PanelDel)
 			// 面板：All
 			ad.GET("env/panel/all", controllers.GetAllPanelData)
+			// 面板：绑定变量
+			ad.PUT("env/panel/binding/update", controllers.UpdatePanelEnvData)
 		}
 	}
 

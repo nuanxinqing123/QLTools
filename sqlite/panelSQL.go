@@ -12,6 +12,7 @@ import (
 	"errors"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"strings"
 )
 
 // InsertPanelData 创建新面板信息
@@ -57,7 +58,7 @@ func DelPanelData(data *model.DelPanelData) {
 // GetPanelAllData 获取面板All信息
 func GetPanelAllData() []model.PanelAll {
 	var p []model.PanelAll
-	sqlStr := "SELECT `id`, `panel_name`, `url`, `client_id`, `client_secret` FROM `ql_panels` where `deleted_at` IS NULL;"
+	sqlStr := "SELECT `id`, `panel_name`, `url`, `client_id`, `client_secret`, `env_binding` FROM `ql_panels` where `deleted_at` IS NULL;"
 	DB.Raw(sqlStr).Scan(&p)
 	return p
 }
@@ -72,4 +73,15 @@ func GetPanelData() (res.ResCode, model.QLPanel) {
 	}
 
 	return res.CodeSuccess, data
+}
+
+// UpdatePanelEnvData 更新面板绑定变量
+func UpdatePanelEnvData(data *model.PanelEnvData) {
+	var d model.QLPanel
+	// []String 转换 String 储存
+	s := strings.Join(data.EnvBinding, "")
+	// 通过ID查询并更新数据
+	DB.Where("id = ? ", data.UID).First(&d)
+	d.EnvBinding = s
+	DB.Save(&d)
 }

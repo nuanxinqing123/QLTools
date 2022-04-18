@@ -113,3 +113,32 @@ func GetAllPanelData(c *gin.Context) {
 		res.ResSuccess(c, env)
 	}
 }
+
+// UpdatePanelEnvData 修改面板绑定变量
+func UpdatePanelEnvData(c *gin.Context) {
+	// 获取参数
+	p := new(model.PanelEnvData)
+	if err := c.ShouldBindJSON(&p); err != nil {
+		// 参数校验
+		zap.L().Error("SignInHandle with invalid param", zap.Error(err))
+
+		// 判断err是不是validator.ValidationErrors类型
+		errs, ok := err.(validator.ValidationErrors)
+		if !ok {
+			res.ResError(c, res.CodeInvalidParam)
+			return
+		}
+
+		// 翻译错误
+		res.ResErrorWithMsg(c, res.CodeInvalidParam, val.RemoveTopStruct(errs.Translate(val.Trans)))
+		return
+	}
+
+	// 处理业务
+	resCode := logic.UpdatePanelEnvData(p)
+	switch resCode {
+	case res.CodeSuccess:
+		// 修改成功
+		res.ResSuccess(c, "修改成功")
+	}
+}

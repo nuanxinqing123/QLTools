@@ -11,8 +11,8 @@ import (
 )
 
 // GetServerCount 获取可用服务器和ID值
-func GetServerCount() ([]*model.QLPanel, int) {
-	var s []*model.QLPanel
+func GetServerCount() ([]model.QLPanel, int) {
+	var s []model.QLPanel
 	result := DB.Find(&s)
 	return s, int(result.RowsAffected)
 }

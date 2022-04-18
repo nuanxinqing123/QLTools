@@ -17,6 +17,7 @@ type QLPanel struct {
 	ClientSecret string `binding:"required"` // 面板Client_Secret
 	Token        string // 面板Token
 	Params       int    // 面板Params
+	EnvBinding   string // 绑定变量
 }
 
 // PanelAll 全部面板信息
@@ -26,6 +27,7 @@ type PanelAll struct {
 	URL          string `json:"url"`
 	ClientID     string `json:"id"`
 	ClientSecret string `json:"secret"`
+	EnvBinding   string `json:"envBinding"`
 }
 
 // PanelData 创建面板数据
@@ -48,6 +50,12 @@ type UpPanelData struct {
 // DelPanelData 删除面板数据
 type DelPanelData struct {
 	UID int `json:"uid" binding:"required"` // 数据库ID值
+}
+
+// PanelEnvData 修改面板绑定变量
+type PanelEnvData struct {
+	UID        int      `json:"uid" binding:"required"`        // 数据库ID值
+	EnvBinding []string `json:"envBinding" binding:"required"` // 变量值
 }
 
 // EnvSData 可用服务器

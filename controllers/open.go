@@ -132,15 +132,15 @@ func CheckToken(c *gin.Context) {
 	}
 }
 
-// EnvData 可用服务器&可选变量名&可用数量
-func EnvData(c *gin.Context) {
+// IndexData 可用服务
+func IndexData(c *gin.Context) {
 	// 处理业务
 	resCode, data := logic.EnvData()
 	switch resCode {
 	case res.CodeEnvIsNull:
 		res.ResErrorWithMsg(c, res.CodeEnvIsNull, data)
 	case res.CodeDataError:
-		res.ResErrorWithMsg(c, res.CodeDataError, "未获得授权或Token已过期, 以尝试自动更新")
+		res.ResErrorWithMsg(c, res.CodeDataError, "未获得授权或已过期, 以尝试自动更新")
 	case res.CodeCheckDataNotExist:
 		// 获取数据不存在
 		res.ResError(c, res.CodeCheckDataNotExist)

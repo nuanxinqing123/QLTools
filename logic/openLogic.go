@@ -137,3 +137,8 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 
 	return res.CodeSuccess
 }
+
+// IndexData 获取All Data
+func IndexData() {
+
+}
