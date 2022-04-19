@@ -29,12 +29,12 @@ func CheckServerDoesItExist(id int) (bool, model.QLPanel) {
 }
 
 // CheckEnvNameDoesItExist 检查变量是否存在
-func CheckEnvNameDoesItExist(name string) bool {
+func CheckEnvNameDoesItExist(name string) (bool, model.EnvName) {
 	var e model.EnvName
 	DB.Where("name = ?", name).First(&e)
 	if e.ID == 0 {
-		return false
+		return false, e
 	}
 
-	return true
+	return true, e
 }

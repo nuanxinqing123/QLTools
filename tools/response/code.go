@@ -33,6 +33,9 @@ const (
 
 	CodeCheckDataNotExist
 	CodeOldPassWordError
+	CodeEnvDataMismatch
+	CodeLocationFull
+	CodeDataIsNull
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -56,10 +59,13 @@ var codeMsgMap = map[ResCode]string{
 	CodeConnectionTimedOut:        "面板地址连接超时",
 	CodeDataError:                 "面板信息有错误",
 	CodeErrorOccurredInTheRequest: "请求发生错误",
-	CodeStorageFailed:             "信息储存失败",
+	CodeStorageFailed:             "发生一点小意外，请重新提交",
 
 	CodeCheckDataNotExist: "查询信息为空",
 	CodeOldPassWordError:  "旧密码错误",
+	CodeEnvDataMismatch:   "上传内容不符合规定",
+	CodeLocationFull:      "限额已满，禁止提交",
+	CodeDataIsNull:        "提交内容不能为空",
 }
 
 func (c ResCode) Msg() string {

@@ -62,3 +62,10 @@ func GetEnvNameAll() []*model.EnvName {
 	DB.Find(&s)
 	return s
 }
+
+// GetEnvNameCount 根据变量名获取配额
+func GetEnvNameCount(name string) int {
+	var env model.EnvName
+	DB.Where("name = ?", name).First(&env)
+	return env.Quantity
+}

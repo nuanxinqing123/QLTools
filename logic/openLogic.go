@@ -14,6 +14,7 @@ import (
 	res "QLPanelTools/tools/response"
 	"encoding/json"
 	"go.uber.org/zap"
+	"regexp"
 	"strconv"
 )
 
@@ -103,14 +104,37 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 	}
 
 	// 校验变量名是否存在
-	result = sqlite.CheckEnvNameDoesItExist(p.EnvName)
+	result, eData := sqlite.CheckEnvNameDoesItExist(p.EnvName)
 	if result != true {
 		// 变量不存在
 		return res.CodeErrorOccurredInTheRequest
 	}
 
 	if p.EnvData == "" {
-		return res.CodeStorageFailed
+		return res.CodeDataIsNull
+	}
+
+	// 正则处理
+	if eData.Regex != "" {
+		// 需要处理正则
+		reg := regexp.MustCompile(eData.Regex)
+		// 匹配内容
+		if reg != nil {
+			s := reg.FindAllStringSubmatch(p.EnvData, -1)
+			if len(s) == 0 {
+				return res.CodeEnvDataMismatch
+			}
+		} else {
+			return res.CodeServerBusy
+		}
+	}
+
+	// 校验变量配额
+	c := CalculateQuantity(p.ServerID, p.EnvName)
+	if c > 1999 {
+		return res.CodeServerBusy
+	} else if c <= 0 {
+		return res.CodeLocationFull
 	}
 
 	// 提交到服务器
@@ -138,7 +162,34 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 	return res.CodeSuccess
 }
 
-// IndexData 获取All Data
-func IndexData() {
+// CalculateQuantity 计算变量剩余位置
+func CalculateQuantity(id int, name string) int {
+	// 获取变量数据
+	count := sqlite.GetEnvNameCount(name)
 
+	// 获取容器信息
+	sData := sqlite.GetPanelDataByID(id)
+
+	// 获取面板已存在变量数量
+	url := panel.StringHTTP(sData.URL) + "/open/envs?searchValue=&t=" + strconv.Itoa(sData.Params)
+	allData, err := requests.Requests("GET", url, "", sData.Token)
+	if err != nil {
+		return res.CodeServerBusy
+	}
+	var token model.EnvData
+	err = json.Unmarshal(allData, &token)
+	if err != nil {
+		zap.L().Error(err.Error())
+		return res.CodeServerBusy
+	}
+
+	// 计算变量剩余限额
+	c := count
+	for i := 0; i < len(token.Data); i++ {
+		if token.Data[i].Name == name {
+			c--
+		}
+	}
+
+	return c
 }

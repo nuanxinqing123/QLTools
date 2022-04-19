@@ -85,3 +85,11 @@ func UpdatePanelEnvData(data *model.PanelEnvData) {
 	d.EnvBinding = s
 	DB.Save(&d)
 }
+
+// GetPanelDataByID 根据ID值查询容器信息
+func GetPanelDataByID(id int) model.QLPanel {
+	var d model.QLPanel
+	// 通过ID查询容器
+	DB.Where("id = ? ", id).First(&d)
+	return d
+}

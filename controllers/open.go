@@ -179,9 +179,15 @@ func EnvADD(c *gin.Context) {
 	case res.CodeServerBusy:
 		res.ResErrorWithMsg(c, res.CodeServerBusy, "服务繁忙,请稍后重试")
 	case res.CodeStorageFailed:
-		res.ResErrorWithMsg(c, res.CodeStorageFailed, "信息储存失败或提交内容为空")
+		res.ResErrorWithMsg(c, res.CodeStorageFailed, "发生一点小意外，请重新提交")
 	case res.CodeErrorOccurredInTheRequest:
 		res.ResErrorWithMsg(c, res.CodeErrorOccurredInTheRequest, "提交服务器或变量名不在白名单")
+	case res.CodeEnvDataMismatch:
+		res.ResErrorWithMsg(c, res.CodeEnvDataMismatch, "上传内容不符合规定, 请检查后再提交")
+	case res.CodeDataIsNull:
+		res.ResErrorWithMsg(c, res.CodeDataIsNull, "上传内容能为空")
+	case res.CodeLocationFull:
+		res.ResErrorWithMsg(c, res.CodeLocationFull, "限额已满，禁止提交")
 	case res.CodeSuccess:
 		// 上传成功
 		res.ResSuccess(c, "上传成功")
