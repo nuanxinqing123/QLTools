@@ -9,6 +9,7 @@ package jwt
 import (
 	"errors"
 	"github.com/golang-jwt/jwt"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -55,6 +56,7 @@ func ParseToken(tokenString string) (*MyClaims, error) {
 		return mySecret, nil
 	})
 	if err != nil {
+		zap.L().Error(err.Error())
 		return nil, err
 	}
 
