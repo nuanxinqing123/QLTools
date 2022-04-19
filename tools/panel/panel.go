@@ -30,11 +30,10 @@ func StringHTTP(url string) string {
 func GetPanelToken(url, id, secret string) (res.ResCode, model.Token) {
 	var token model.Token
 
-	URL := fmt.Sprintf("/open/auth/token?client_id=%s&client_secret=%s", id, secret)
-	nUrl := StringHTTP(url)
+	URL := StringHTTP(url) + fmt.Sprintf("/open/auth/token?client_id=%s&client_secret=%s", id, secret)
 
 	// 请求Token
-	strData, err := requests.Requests("GET", nUrl+URL, "", "")
+	strData, err := requests.Requests("GET", URL, "", "")
 	if err != nil {
 		return res.CodeServerBusy, token
 	}
