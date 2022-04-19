@@ -38,8 +38,10 @@ type EnvNameDel struct {
 
 // envNameData 变量数据
 type envNameData struct {
-	Name     string `json:"name"`
-	Quantity int    `json:"quantity"`
+	// 变量名称
+	Name string `json:"name"`
+	// 变量剩余限额
+	Quantity int `json:"quantity"`
 }
 
 // EnvAdd 上传变量

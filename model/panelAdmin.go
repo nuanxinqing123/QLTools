@@ -58,16 +58,18 @@ type PanelEnvData struct {
 	EnvBinding []string `json:"envBinding" binding:"required"` // 变量值
 }
 
-// EnvSData 可用服务器
-type EnvSData struct {
-	Count      int           `json:"count"`
-	ServerData []envSData    `json:"serverData"`
-	EnvData    []envNameData `json:"envData"`
+type EnvStartServer struct {
+	// 可用服务器组
+	ServerData []envSData `json:"serverData"`
 }
 
 type envSData struct {
-	ID   int    `json:"ID"`
+	// 容器ID
+	ID int `json:"ID"`
+	// 容器名称
 	Name string `json:"PanelName"`
+	// 容器绑定变量
+	EnvData []envNameData `json:"envData"`
 }
 
 // Token 面板Token数据
