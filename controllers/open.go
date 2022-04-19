@@ -125,7 +125,7 @@ func CheckToken(c *gin.Context) {
 		res.ResError(c, res.CodeServerBusy)
 	case res.CodeInvalidToken:
 		// Token已失效
-		res.ResError(c, res.CodeInvalidToken)
+		res.ResErrorWithMsg(c, res.CodeInvalidToken, "无效的Token")
 	case res.CodeSuccess:
 		// 上传成功
 		res.ResSuccess(c, bol)
@@ -137,10 +137,8 @@ func IndexData(c *gin.Context) {
 	// 处理业务
 	resCode, data := logic.EnvData()
 	switch resCode {
-	case res.CodeEnvIsNull:
-		res.ResErrorWithMsg(c, res.CodeEnvIsNull, data)
 	case res.CodeDataError:
-		res.ResErrorWithMsg(c, res.CodeDataError, "未获得授权或已过期, 以尝试自动更新")
+		res.ResErrorWithMsg(c, res.CodeDataError, "发生一点小意外，请刷新页面")
 	case res.CodeCheckDataNotExist:
 		// 获取数据不存在
 		res.ResError(c, res.CodeCheckDataNotExist)
