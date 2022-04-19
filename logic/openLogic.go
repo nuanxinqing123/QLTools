@@ -144,7 +144,7 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 	// 提交到服务器
 	url := panel.StringHTTP(sData.URL) + "/open/envs?t=" + strconv.Itoa(sData.Params)
 	data := `[{"value": "` + p.EnvData + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
-
+	zap.L().Debug(data)
 	r, err := requests.Requests("POST", url, data, sData.Token)
 	if err != nil {
 		return res.CodeServerBusy
