@@ -43,7 +43,7 @@ func EnvNameDel(p *model.EnvNameDel) res.ResCode {
 }
 
 // GetAllEnvData 获取变量全部信息
-func GetAllEnvData() ([]*model.EnvName, res.ResCode) {
+func GetAllEnvData() ([]model.EnvName, res.ResCode) {
 	// 获取信息
 	env := sqlite.GetEnvNameAll()
 	return env, res.CodeSuccess

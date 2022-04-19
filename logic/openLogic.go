@@ -16,13 +16,15 @@ import (
 	"go.uber.org/zap"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 // EnvData 获取all data
-func EnvData() (res.ResCode, model.EnvSData) {
-	var sd model.EnvSData
-	// 获取可用服务器
-	sData, count := sqlite.GetServerCount()
+func EnvData() (res.ResCode, model.EnvStartServer) {
+	var sd model.EnvStartServer
+
+	// 获取所有服务器信息
+	sData := sqlite.GetServerCount()
 	data, err := json.Marshal(sData)
 	if err != nil {
 		zap.L().Error(err.Error())
@@ -34,67 +36,60 @@ func EnvData() (res.ResCode, model.EnvSData) {
 		zap.L().Error(err.Error())
 		return res.CodeServerBusy, sd
 	}
-	sd.Count = count
 
-	// 获取变量数据
-	envData := sqlite.GetEnvNameAll()
-	eData, err := json.Marshal(envData)
-	if err != nil {
-		zap.L().Error(err.Error())
-		return res.CodeServerBusy, sd
-	}
-	err = json.Unmarshal(eData, &sd.EnvData)
-	if err != nil {
-		zap.L().Error(err.Error())
-		return res.CodeServerBusy, sd
-	}
+	for i := 0; i < len(sd.ServerData); i++ {
+		// 获取变量数据
+		envData := sqlite.GetEnvAllByID(sd.ServerData[i].ID)
+		eData, err := json.Marshal(envData)
+		if err != nil {
+			zap.L().Error(err.Error())
+			return res.CodeServerBusy, sd
+		}
 
-	// 获取面板信息
-	resCode, panelData := sqlite.GetPanelData()
-	if resCode == res.CodeCheckDataNotExist {
-		return res.CodeCheckDataNotExist, sd
-	}
+		// 数据绑定
+		err = json.Unmarshal(eData, &sd.ServerData[i].EnvData)
+		if err != nil {
+			zap.L().Error(err.Error())
+			return res.CodeServerBusy, sd
+		}
 
-	// 获取面板已存在变量数量
-	url := panel.StringHTTP(panelData.URL) + "/open/envs?searchValue=&t=" + strconv.Itoa(panelData.Params)
-	allData, err := requests.Requests("GET", url, "", panelData.Token)
-	if err != nil {
-		return res.CodeServerBusy, sd
-	}
-	var token model.EnvData
-	err = json.Unmarshal(allData, &token)
-	if err != nil {
-		zap.L().Error(err.Error())
-		return res.CodeServerBusy, sd
-	}
+		// 获取面板已存在变量数量
+		url := panel.StringHTTP(sData[i].URL) + "/open/envs?searchValue=&t=" + strconv.Itoa(sData[i].Params)
+		allData, err := requests.Requests("GET", url, "", sData[i].Token)
+		if err != nil {
+			return res.CodeServerBusy, sd
+		}
+		var token model.EnvData
+		err = json.Unmarshal(allData, &token)
+		if err != nil {
+			zap.L().Error(err.Error())
+			return res.CodeServerBusy, sd
+		}
 
-	if token.Code != 200 {
-		// 尝试获取授权
-		go panel.GetPanelToken(panelData.URL, panelData.ClientID, panelData.ClientSecret)
+		// 判断返回状态
+		if token.Code != 200 {
+			// 尝试获取授权
+			go panel.GetPanelToken(sData[i].URL, sData[i].ClientID, sData[i].ClientSecret)
 
-		// 未授权或Token失效
-		return res.CodeDataError, sd
-	}
+			// 未授权或Token失效
+			return res.CodeDataError, sd
+		}
 
-	// 如果面板变量为NULL
-	if len(token.Data) == 0 {
-		return res.CodeEnvIsNull, sd
-	}
-
-	// 计算变量剩余限额
-	for x := 0; x < len(sd.EnvData); x++ {
-		for i := 0; i < len(token.Data); i++ {
-			if token.Data[i].Name == sd.EnvData[x].Name {
-				sd.EnvData[x].Quantity = sd.EnvData[x].Quantity - 1
-			}
+		// 计算变量剩余限额
+		for x := 0; x < len(sd.ServerData[i].EnvData); x++ {
+			sd.ServerData[i].EnvData[x].Quantity = CalculateQuantity(sd.ServerData[i].ID, sd.ServerData[i].EnvData[x].Name)
 		}
 	}
-
 	return res.CodeSuccess, sd
 }
 
 // EnvAdd 添加变量
 func EnvAdd(p *model.EnvAdd) res.ResCode {
+	// 不允许内容为空
+	if p.EnvData == "" {
+		return res.CodeDataIsNull
+	}
+
 	var token model.ResAdd
 	// 校验服务器ID
 	result, sData := sqlite.CheckServerDoesItExist(p.ServerID)
@@ -110,8 +105,17 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 		return res.CodeErrorOccurredInTheRequest
 	}
 
-	if p.EnvData == "" {
-		return res.CodeDataIsNull
+	// 转换切片
+	envBind := strings.Split(sData.EnvBinding, "")
+	// 校验变量是否处于容器白名单
+	num := 0
+	for i := 0; i < len(envBind); i++ {
+		if envBind[i] == strconv.Itoa(int(eData.ID)) {
+			num++
+		}
+	}
+	if num == 0 {
+		return res.CodeErrorOccurredInTheRequest
 	}
 
 	// 正则处理
