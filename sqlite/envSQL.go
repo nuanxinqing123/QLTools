@@ -9,6 +9,8 @@ package sqlite
 import (
 	"QLPanelTools/model"
 	"go.uber.org/zap"
+	"strconv"
+	"strings"
 )
 
 // CheckEnvName 检查变量名是否存在
@@ -57,10 +59,32 @@ func DelEnvName(data *model.EnvNameDel) {
 }
 
 // GetEnvNameAll 获取变量All数据
-func GetEnvNameAll() []*model.EnvName {
-	var s []*model.EnvName
+func GetEnvNameAll() []model.EnvName {
+	var s []model.EnvName
 	DB.Find(&s)
 	return s
+}
+
+// GetEnvAllByID 根据ID值获取变量数据
+func GetEnvAllByID(id int) []model.EnvName {
+	// ID值查询服务
+	var s model.QLPanel
+	DB.First(&s, id)
+	// 转换切片
+	envBind := strings.Split(s.EnvBinding, "")
+	// 切片转换int类型
+	var e []int
+	for i := 0; i < len(envBind); i++ {
+		ee, err := strconv.Atoi(envBind[i])
+		if err != nil {
+			zap.L().Error(err.Error())
+		}
+		e = append(e, ee)
+	}
+	var env []model.EnvName
+	// 根据绑定值查询变量数据
+	DB.Find(&env, e)
+	return env
 }
 
 // GetEnvNameCount 根据变量名获取配额

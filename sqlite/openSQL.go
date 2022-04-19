@@ -11,10 +11,10 @@ import (
 )
 
 // GetServerCount 获取可用服务器和ID值
-func GetServerCount() ([]model.QLPanel, int) {
+func GetServerCount() []model.QLPanel {
 	var s []model.QLPanel
-	result := DB.Find(&s)
-	return s, int(result.RowsAffected)
+	DB.Find(&s)
+	return s
 }
 
 // CheckServerDoesItExist 检查服务器是否存在
