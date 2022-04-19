@@ -63,8 +63,6 @@ func Setup() *gin.Engine {
 			// 检查Token是否有效
 			open.POST("check/token", controllers.CheckToken)
 
-			// 可用服务器&可选变量名&可用数量
-			//open.GET("env/data", controllers.EnvData)
 			// 可用服务
 			open.GET("index/data", controllers.IndexData)
 			// 上传变量
