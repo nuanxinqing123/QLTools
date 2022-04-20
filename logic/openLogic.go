@@ -119,12 +119,13 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 	}
 
 	// 正则处理
+	var s [][]string
 	if eData.Regex != "" {
 		// 需要处理正则
 		reg := regexp.MustCompile(eData.Regex)
 		// 匹配内容
 		if reg != nil {
-			s := reg.FindAllStringSubmatch(p.EnvData, -1)
+			s = reg.FindAllStringSubmatch(p.EnvData, -1)
 			if len(s) == 0 {
 				return res.CodeEnvDataMismatch
 			}
@@ -132,7 +133,6 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 			return res.CodeServerBusy
 		}
 	}
-
 	// 校验变量配额
 	c := CalculateQuantity(p.ServerID, p.EnvName)
 	if c > 1999 {
@@ -143,7 +143,7 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 
 	// 提交到服务器
 	url := panel.StringHTTP(sData.URL) + "/open/envs?t=" + strconv.Itoa(sData.Params)
-	data := `[{"value": "` + p.EnvData + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
+	data := `[{"value": "` + s[0][0] + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
 	zap.L().Debug(data)
 	r, err := requests.Requests("POST", url, data, sData.Token)
 	if err != nil {
