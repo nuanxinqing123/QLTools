@@ -9,9 +9,11 @@ package routes
 import (
 	"QLPanelTools/bindata"
 	"QLPanelTools/controllers"
+	"QLPanelTools/logger"
 	"QLPanelTools/middleware"
 	assetfs "github.com/elazarl/go-bindata-assetfs"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"html/template"
 	"strings"
 	"time"
@@ -23,7 +25,10 @@ func Setup() *gin.Engine {
 
 	// 配置中间件
 	{
-		//r.Use(logger.GinLogger(), logger.GinRecovery(true))
+		// 配置日志
+		if viper.GetString("app.mode") == "" {
+			r.Use(logger.GinLogger(), logger.GinRecovery(true))
+		}
 		// 限流熔断
 		r.Use(middleware.RateLimitMiddleware(time.Minute, 500, 500)) // 每分钟限制500次请求, 超出熔断
 	}
