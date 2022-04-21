@@ -25,8 +25,8 @@
 - 配置文件：Viper库
 - 日志：Zap库
 - 数据库：GORM - SQLite
-- API文档：暂不公布
-- 文档密码：暂不公布
+- API文档：https://console-docs.apipost.cn/preview/0fdb4c815ed24ab2/e2057f0e0b8dc545
+- 文档密码：609889
 
 ## 🧸配置文件
 ```yaml
