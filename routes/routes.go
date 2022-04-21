@@ -67,6 +67,8 @@ func Setup() *gin.Engine {
 			open.POST("signin", middleware.RateLimitMiddleware(time.Minute, 10, 10), controllers.SignInHandle) // 每分钟限制10次请求, 超出熔断
 			// 检查Token是否有效
 			open.POST("check/token", controllers.CheckToken)
+			// 设置：获取单个配置
+			open.GET("set/setting", controllers.GetSetting)
 
 			// 可用服务
 			open.GET("index/data", controllers.IndexData)
@@ -109,6 +111,11 @@ func Setup() *gin.Engine {
 			ad.GET("env/panel/all", controllers.GetAllPanelData)
 			// 面板：绑定变量
 			ad.PUT("env/panel/binding/update", controllers.UpdatePanelEnvData)
+
+			// 设置：获取全部配置
+			ad.GET("set/settings", controllers.GetSettings)
+			// 设置：修改网站配置信息
+			ad.PUT("set/settings", controllers.SaveSettings)
 		}
 	}
 
