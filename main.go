@@ -18,6 +18,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -28,6 +30,13 @@ import (
 )
 
 func main() {
+	// 判断注册默认配置文件
+	bol := IFConfig("config/config.yaml")
+	if bol != true {
+		fmt.Println("自动生成配置文件失败, 请按照仓库内容手动在config/config.yaml下创建配置文件")
+		return
+	}
+
 	// 加载配置文件
 	if err := settings.Init(); err != nil {
 		fmt.Printf("viper init failed, err:%v\n", err)
@@ -104,4 +113,53 @@ func main() {
 	}
 
 	zap.L().Info("Service has been shut down")
+}
+
+type Config struct {
+	App App `yaml:"app"`
+}
+
+type App struct {
+	Mode string `yaml:"mode"`
+	Port int    `yaml:"port"`
+}
+
+// IFConfig 判断并自动生成启动配置文件
+func IFConfig(src string) bool {
+	// 检测是否存在配置文件
+	file, err := os.Stat(src)
+	if err != nil {
+		_, err = os.Create(src)
+		if err != nil {
+			fmt.Printf("Create Config File Error: %s", err)
+			return false
+		}
+
+		// 需要生成默认
+		cfg := &Config{
+			App: App{
+				Mode: "",
+				Port: 15000,
+			},
+		}
+		data, err := yaml.Marshal(cfg)
+		if err != nil {
+			fmt.Printf("Marshal Config Error: %s", err)
+			return false
+		}
+
+		// 写入默认配置
+		err = ioutil.WriteFile(src, data, 0777)
+		if err != nil {
+			fmt.Printf("WriteFile Config Error: %s", err)
+			return false
+		}
+
+		return true
+	}
+	if file.IsDir() {
+		return false
+	} else {
+		return true
+	}
 }
