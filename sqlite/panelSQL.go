@@ -8,10 +8,7 @@ package sqlite
 
 import (
 	"QLPanelTools/model"
-	res "QLPanelTools/tools/response"
-	"errors"
 	"go.uber.org/zap"
-	"gorm.io/gorm"
 	"strings"
 )
 
@@ -61,18 +58,6 @@ func GetPanelAllData() []model.PanelAll {
 	sqlStr := "SELECT `id`, `panel_name`, `url`, `client_id`, `client_secret`, `env_binding` FROM `ql_panels` where `deleted_at` IS NULL;"
 	DB.Raw(sqlStr).Scan(&p)
 	return p
-}
-
-// GetPanelData 通过第一个面板的配置信息
-func GetPanelData() (res.ResCode, model.QLPanel) {
-	var data model.QLPanel
-	result := DB.First(&data)
-
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return res.CodeCheckDataNotExist, data
-	}
-
-	return res.CodeSuccess, data
 }
 
 // UpdatePanelEnvData 更新面板绑定变量
