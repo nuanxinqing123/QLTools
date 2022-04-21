@@ -115,7 +115,7 @@ func Setup() *gin.Engine {
 	return r
 }
 
-//加载模板文件
+// loadTemplate 加载模板文件
 func loadTemplate() (*template.Template, error) {
 	t := template.New("")
 	for _, name := range bindata.AssetNames() {
