@@ -129,6 +129,16 @@ func IFConfig(src string) bool {
 	// 检测是否存在配置文件
 	file, err := os.Stat(src)
 	if err != nil {
+		err = os.Mkdir("config", 0777)
+		if err != nil {
+			fmt.Printf("Create Config Dir Error: %s", err)
+			return false
+		}
+		err = os.Chmod("config", 0777)
+		if err != nil {
+			fmt.Printf("Chmod Config Dir Error: %s", err)
+			return false
+		}
 		_, err = os.Create(src)
 		if err != nil {
 			fmt.Printf("Create Config File Error: %s", err)
