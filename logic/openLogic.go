@@ -40,44 +40,46 @@ func EnvData() (res.ResCode, model.EnvStartServer) {
 	for i := 0; i < len(sd.ServerData); i++ {
 		// 获取变量数据
 		envData := sqlite.GetEnvAllByID(sd.ServerData[i].ID)
-		eData, err := json.Marshal(envData)
-		if err != nil {
-			zap.L().Error(err.Error())
-			return res.CodeServerBusy, sd
-		}
+		if len(envData) != 0 {
+			eData, err := json.Marshal(envData)
+			if err != nil {
+				zap.L().Error(err.Error())
+				return res.CodeServerBusy, sd
+			}
 
-		// 数据绑定
-		err = json.Unmarshal(eData, &sd.ServerData[i].EnvData)
-		if err != nil {
-			zap.L().Error(err.Error())
-			return res.CodeServerBusy, sd
-		}
+			// 数据绑定
+			err = json.Unmarshal(eData, &sd.ServerData[i].EnvData)
+			if err != nil {
+				zap.L().Error(err.Error())
+				return res.CodeServerBusy, sd
+			}
 
-		// 获取面板已存在变量数量
-		url := panel.StringHTTP(sData[i].URL) + "/open/envs?searchValue=&t=" + strconv.Itoa(sData[i].Params)
-		allData, err := requests.Requests("GET", url, "", sData[i].Token)
-		if err != nil {
-			return res.CodeServerBusy, sd
-		}
-		var token model.EnvData
-		err = json.Unmarshal(allData, &token)
-		if err != nil {
-			zap.L().Error(err.Error())
-			return res.CodeServerBusy, sd
-		}
+			// 获取面板已存在变量数量
+			url := panel.StringHTTP(sData[i].URL) + "/open/envs?searchValue=&t=" + strconv.Itoa(sData[i].Params)
+			allData, err := requests.Requests("GET", url, "", sData[i].Token)
+			if err != nil {
+				return res.CodeServerBusy, sd
+			}
+			var token model.EnvData
+			err = json.Unmarshal(allData, &token)
+			if err != nil {
+				zap.L().Error(err.Error())
+				return res.CodeServerBusy, sd
+			}
 
-		// 判断返回状态
-		if token.Code != 200 {
-			// 尝试获取授权
-			go panel.GetPanelToken(sData[i].URL, sData[i].ClientID, sData[i].ClientSecret)
+			// 判断返回状态
+			if token.Code != 200 {
+				// 尝试获取授权
+				go panel.GetPanelToken(sData[i].URL, sData[i].ClientID, sData[i].ClientSecret)
 
-			// 未授权或Token失效
-			return res.CodeDataError, sd
-		}
+				// 未授权或Token失效
+				return res.CodeDataError, sd
+			}
 
-		// 计算变量剩余限额
-		for x := 0; x < len(sd.ServerData[i].EnvData); x++ {
-			sd.ServerData[i].EnvData[x].Quantity = CalculateQuantity(sd.ServerData[i].ID, sd.ServerData[i].EnvData[x].Name)
+			// 计算变量剩余限额
+			for x := 0; x < len(sd.ServerData[i].EnvData); x++ {
+				sd.ServerData[i].EnvData[x].Quantity, _ = CalculateQuantity(sd.ServerData[i].ID, sd.ServerData[i].EnvData[x].Name)
+			}
 		}
 	}
 	return res.CodeSuccess, sd
@@ -122,6 +124,7 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 	var s [][]string
 	if eData.Regex != "" {
 		// 需要处理正则
+		zap.L().Debug("需要处理正则")
 		reg := regexp.MustCompile(eData.Regex)
 		// 匹配内容
 		if reg != nil {
@@ -134,16 +137,24 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 		}
 	}
 	// 校验变量配额
-	c := CalculateQuantity(p.ServerID, p.EnvName)
-	if c > 1999 {
+	c, code := CalculateQuantity(p.ServerID, p.EnvName)
+	if code == res.CodeServerBusy {
+		zap.L().Debug("需要处理正则")
 		return res.CodeServerBusy
 	} else if c <= 0 {
+		zap.L().Debug("限额已满，禁止提交")
 		return res.CodeLocationFull
 	}
 
 	// 提交到服务器
+	var data string
 	url := panel.StringHTTP(sData.URL) + "/open/envs?t=" + strconv.Itoa(sData.Params)
-	data := `[{"value": "` + s[0][0] + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
+	zap.L().Debug(url)
+	if eData.Regex != "" {
+		data = `[{"value": "` + s[0][0] + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
+	} else {
+		data = `[{"value": "` + p.EnvData + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
+	}
 	zap.L().Debug(data)
 	r, err := requests.Requests("POST", url, data, sData.Token)
 	if err != nil {
@@ -167,7 +178,7 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 }
 
 // CalculateQuantity 计算变量剩余位置
-func CalculateQuantity(id int, name string) int {
+func CalculateQuantity(id int, name string) (int, res.ResCode) {
 	// 获取变量数据
 	count := sqlite.GetEnvNameCount(name)
 
@@ -178,13 +189,14 @@ func CalculateQuantity(id int, name string) int {
 	url := panel.StringHTTP(sData.URL) + "/open/envs?searchValue=&t=" + strconv.Itoa(sData.Params)
 	allData, err := requests.Requests("GET", url, "", sData.Token)
 	if err != nil {
-		return res.CodeServerBusy
+		zap.L().Error(err.Error())
+		return 0, res.CodeServerBusy
 	}
 	var token model.EnvData
 	err = json.Unmarshal(allData, &token)
 	if err != nil {
 		zap.L().Error(err.Error())
-		return res.CodeServerBusy
+		return 0, res.CodeServerBusy
 	}
 
 	// 计算变量剩余限额
@@ -195,5 +207,5 @@ func CalculateQuantity(id int, name string) int {
 		}
 	}
 
-	return c
+	return c, res.CodeSuccess
 }
