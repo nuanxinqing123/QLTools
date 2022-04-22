@@ -81,9 +81,12 @@ func GetEnvAllByID(id int) []model.EnvName {
 		}
 		e = append(e, ee)
 	}
+
 	var env []model.EnvName
 	// 根据绑定值查询变量数据
-	DB.Find(&env, e)
+	if len(e) != 0 {
+		DB.Find(&env, e)
+	}
 	return env
 }
 
