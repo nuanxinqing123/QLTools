@@ -116,6 +116,9 @@ func Setup() *gin.Engine {
 			ad.GET("set/settings", controllers.GetSettings)
 			// 设置：修改网站配置信息
 			ad.PUT("set/settings", controllers.SaveSettings)
+
+			// 系统：检查版本
+			ad.GET("check/version", controllers.CheckVersion)
 		}
 	}
 
