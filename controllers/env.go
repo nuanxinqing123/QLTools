@@ -116,35 +116,3 @@ func GetAllEnvData(c *gin.Context) {
 		res.ResSuccess(c, env)
 	}
 }
-
-// GetPanelToken 获取面板Token
-//func GetPanelToken(c *gin.Context) {
-//	// 获取参数
-//	p := new(model.PanelData)
-//	if err := c.ShouldBindJSON(&p); err != nil {
-//		// 参数校验
-//		zap.L().Error("SignInHandle with invalid param", zap.Error(err))
-//
-//		// 判断err是不是validator.ValidationErrors类型
-//		errs, ok := err.(validator.ValidationErrors)
-//		if !ok {
-//			res.ResError(c, res.CodeInvalidParam)
-//			return
-//		}
-//
-//		// 翻译错误
-//		res.ResErrorWithMsg(c, res.CodeInvalidParam, val.RemoveTopStruct(errs.Translate(val.Trans)))
-//		return
-//	}
-//
-//	// 处理业务
-//	resCode, token := requests.GetPanelToken(p.URL, p.ID, p.Secret)
-//	switch resCode {
-//	case res.CodeSuccess:
-//		// 注册成功
-//		res.ResSuccess(c, token)
-//	case res.CodeServerBusy:
-//		// 服务出现异常
-//		res.ResError(c, res.CodeServerBusy)
-//	}
-//}
