@@ -64,7 +64,7 @@ func Setup() *gin.Engine {
 			// 账户注册
 			open.POST("signup", controllers.SignUpHandle)
 			// 账户登录
-			open.POST("signin", middleware.RateLimitMiddleware(time.Minute, 10, 10), controllers.SignInHandle) // 每分钟限制10次请求, 超出熔断
+			open.POST("signin", middleware.RateLimitMiddleware(time.Minute, 5, 5), controllers.SignInHandle) // 每分钟限制5次请求, 超出熔断
 			// 检查Token是否有效
 			open.POST("check/token", controllers.CheckToken)
 			// 设置：获取单个配置
