@@ -112,6 +112,15 @@ func Setup() *gin.Engine {
 			// 面板：绑定变量
 			ad.PUT("env/panel/binding/update", controllers.UpdatePanelEnvData)
 
+			// 容器：迁移
+			ad.POST("container/transfer", controllers.Transfer)
+			// 容器：复制
+			ad.POST("container/copy", controllers.Copy)
+			// 容器：备份
+			ad.POST("container/backup", controllers.Backup)
+			// 容器：恢复
+			ad.POST("container/restore", controllers.Restore)
+
 			// 设置：获取全部配置
 			ad.GET("set/settings", controllers.GetSettings)
 			// 设置：修改网站配置信息

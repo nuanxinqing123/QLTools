@@ -31,6 +31,7 @@ func Init() *gorm.DB {
 		&model.QLPanel{},
 		&model.LoginRecord{},
 		&model.WebSettings{},
+		&model.OperationRecord{},
 	)
 	if err != nil {
 		zap.L().Error("SQLite 自动迁移失败")

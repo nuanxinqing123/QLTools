@@ -24,6 +24,7 @@ func AdminTest(c *gin.Context) {
 	})
 }
 
+// GetPanelToken 面板连接测试
 func GetPanelToken(c *gin.Context) {
 	// 获取参数
 	p := new(model.PanelData)

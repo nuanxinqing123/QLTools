@@ -189,7 +189,6 @@ func CalculateQuantity(id int, name string) (int, res.ResCode) {
 	url := panel.StringHTTP(sData.URL) + "/open/envs?searchValue=&t=" + strconv.Itoa(sData.Params)
 	allData, err := requests.Requests("GET", url, "", sData.Token)
 	if err != nil {
-		zap.L().Error(err.Error())
 		return 0, res.CodeServerBusy
 	}
 	var token model.EnvData
