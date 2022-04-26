@@ -37,6 +37,7 @@ const (
 	CodeLocationFull
 	CodeDataIsNull
 	CodePanelNotWhitelisted
+	CodeNotStandardized
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -68,6 +69,7 @@ var codeMsgMap = map[ResCode]string{
 	CodeLocationFull:        "限额已满，禁止提交",
 	CodeDataIsNull:          "提交内容不能为空",
 	CodePanelNotWhitelisted: "提交服务器不在白名单",
+	CodeNotStandardized:     "提交数据不规范",
 }
 
 func (c ResCode) Msg() string {
