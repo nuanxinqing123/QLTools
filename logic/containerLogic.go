@@ -14,7 +14,10 @@ import (
 	res "QLPanelTools/tools/response"
 	"encoding/json"
 	"go.uber.org/zap"
+	"io/ioutil"
+	"os"
 	"strconv"
+	"time"
 )
 
 // Transfer 容器：迁移
@@ -22,6 +25,7 @@ func Transfer(p *model.TransferM) res.ResCode {
 	// 根据ID查询服务器信息
 	oneData := sqlite.GetPanelDataByID(p.IDOne)
 	twoData := sqlite.GetPanelDataByID(p.IDTwo)
+
 	// 检查白名单
 	if oneData.URL == "" {
 		return res.CodePanelNotWhitelisted
@@ -33,15 +37,16 @@ func Transfer(p *model.TransferM) res.ResCode {
 	// 为了保证服务高可用性,强制更新面板Token
 	panel.GetPanelToken(oneData.URL, oneData.ClientID, oneData.ClientSecret)
 	panel.GetPanelToken(twoData.URL, twoData.ClientID, twoData.ClientSecret)
+	time.Sleep(time.Second)
 
 	// 重新获取Token
-	oneData = sqlite.GetPanelDataByID(p.IDOne)
-	twoData = sqlite.GetPanelDataByID(p.IDTwo)
+	one := sqlite.GetPanelDataByID(p.IDOne)
+	two := sqlite.GetPanelDataByID(p.IDTwo)
 
 	// 获取One面板全部信息
 	zap.L().Debug("容器迁移：获取One面板全部信息")
-	url := panel.StringHTTP(oneData.URL) + "/open/envs?searchValue=&t=" + strconv.Itoa(oneData.Params)
-	allData, _ := requests.Requests("GET", url, "", oneData.Token)
+	url := panel.StringHTTP(one.URL) + "/open/envs?searchValue=&t=" + strconv.Itoa(one.Params)
+	allData, _ := requests.Requests("GET", url, "", one.Token)
 
 	// 绑定数据
 	var token model.PanelAllEnv
@@ -51,15 +56,9 @@ func Transfer(p *model.TransferM) res.ResCode {
 		return res.CodeServerBusy
 	}
 
-	// 判断返回状态
-	if token.Code != 200 {
-		// 未授权或Token失效
-		return res.CodeErrorOccurredInTheRequest
-	}
-
 	// 向B容器上传变量
 	zap.L().Debug("容器迁移：向B容器上传变量")
-	go EnvUp(token, twoData.URL, twoData.Token, twoData.Params, "迁移任务(上传)")
+	go EnvUp(token, two.URL, two.Token, two.Params, "迁移任务(上传)")
 
 	// 获取A容器所有变量ID
 	idGroup := `[`
@@ -71,7 +70,7 @@ func Transfer(p *model.TransferM) res.ResCode {
 
 	// 删除A容器变量
 	zap.L().Debug("容器迁移：删除A容器变量")
-	EnvDel(idGroup, oneData.URL, oneData.Token, oneData.Params, "迁移任务(删除)")
+	EnvDel(idGroup, one.URL, one.Token, one.Params, "迁移任务(删除)")
 
 	return res.CodeSuccess
 }
@@ -81,6 +80,7 @@ func Copy(p *model.CopyM) res.ResCode {
 	// 根据ID查询服务器信息
 	oneData := sqlite.GetPanelDataByID(p.IDOne)
 	twoData := sqlite.GetPanelDataByID(p.IDTwo)
+
 	// 检查白名单
 	if oneData.URL == "" {
 		return res.CodePanelNotWhitelisted
@@ -92,15 +92,16 @@ func Copy(p *model.CopyM) res.ResCode {
 	// 为了保证服务高可用性,强制更新面板Token
 	panel.GetPanelToken(oneData.URL, oneData.ClientID, oneData.ClientSecret)
 	panel.GetPanelToken(twoData.URL, twoData.ClientID, twoData.ClientSecret)
+	time.Sleep(time.Second)
 
 	// 重新获取Token
-	oneData = sqlite.GetPanelDataByID(p.IDOne)
-	twoData = sqlite.GetPanelDataByID(p.IDTwo)
+	one := sqlite.GetPanelDataByID(p.IDOne)
+	two := sqlite.GetPanelDataByID(p.IDTwo)
 
 	// 获取One面板全部信息
 	zap.L().Debug("容器复制：获取One面板全部信息")
-	url := panel.StringHTTP(oneData.URL) + "/open/envs?searchValue=&t=" + strconv.Itoa(oneData.Params)
-	allData, _ := requests.Requests("GET", url, "", oneData.Token)
+	url := panel.StringHTTP(one.URL) + "/open/envs?searchValue=&t=" + strconv.Itoa(one.Params)
+	allData, _ := requests.Requests("GET", url, "", one.Token)
 
 	// 绑定数据
 	var token model.PanelAllEnv
@@ -110,27 +111,149 @@ func Copy(p *model.CopyM) res.ResCode {
 		return res.CodeServerBusy
 	}
 
-	// 判断返回状态
-	if token.Code != 200 {
-		// 未授权或Token失效
-		return res.CodeErrorOccurredInTheRequest
-	}
-
 	// 向B容器上传变量
 	zap.L().Debug("容器复制：向B容器上传变量")
-	go EnvUp(token, twoData.URL, twoData.Token, twoData.Params, "复制任务(上传)")
+	go EnvUp(token, two.URL, two.Token, two.Params, "复制任务(上传)")
 
 	return res.CodeSuccess
 }
 
 // Backup 容器：备份
-func Backup(p *model.BackupM) {
+func Backup(p *model.BackupM) res.ResCode {
+	// 根据ID查询服务器信息
+	one := sqlite.GetPanelDataByID(p.IDOne)
 
+	// 检查白名单
+	if one.URL == "" {
+		return res.CodePanelNotWhitelisted
+	}
+
+	// 为了保证服务高可用性,强制更新面板Token
+	panel.GetPanelToken(one.URL, one.ClientID, one.ClientSecret)
+	time.Sleep(time.Second)
+
+	// 重新获取Token
+	server := sqlite.GetPanelDataByID(p.IDOne)
+
+	// 获取One面板全部信息
+	zap.L().Debug("容器备份：获取面板全部信息")
+	url := panel.StringHTTP(server.URL) + "/open/envs?searchValue=&t=" + strconv.Itoa(server.Params)
+	allData, _ := requests.Requests("GET", url, "", server.Token)
+
+	// 绑定数据
+	var token model.PanelAllEnv
+	err := json.Unmarshal(allData, &token)
+	if err != nil {
+		// 记录错误
+		sqlite.RecordingError("备份任务", err.Error())
+		zap.L().Error(err.Error())
+		return res.CodeServerBusy
+	}
+
+	// 创建JSON文件
+	_, err = os.Create("backup.json")
+	if err != nil {
+		// 记录错误
+		sqlite.RecordingError("备份任务", err.Error())
+		zap.L().Error(err.Error())
+		return res.CodeServerBusy
+	}
+
+	// 打开JSON文件
+	f, err := os.Open("backup.json")
+	if err != nil {
+		// 记录错误
+		sqlite.RecordingError("备份任务", err.Error())
+		zap.L().Error(err.Error())
+		return res.CodeServerBusy
+	}
+	defer func(f *os.File) {
+		err = f.Close()
+		if err != nil {
+			// 记录错误
+			sqlite.RecordingError("备份任务", err.Error())
+			zap.L().Error(err.Error())
+		}
+	}(f)
+
+	// 序列化数据
+	b, err := json.Marshal(token.Data)
+	if err != nil {
+		// 记录错误
+		sqlite.RecordingError("备份任务", err.Error())
+		zap.L().Error(err.Error())
+		return res.CodeServerBusy
+	}
+
+	// 保存数据
+	err = ioutil.WriteFile("backup.json", b, 0777)
+	if err != nil {
+		// 记录错误
+		sqlite.RecordingError("备份任务", err.Error())
+		zap.L().Error(err.Error())
+		return res.CodeServerBusy
+	}
+
+	return res.CodeSuccess
 }
 
 // Restore 容器：恢复
-func Restore(p *model.RestoreM) {
+func Restore(sID string) res.ResCode {
+	// 根据ID查询服务器信息
+	iID, err := strconv.Atoi(sID)
+	if err != nil {
+		zap.L().Error(err.Error())
+		return res.CodeServerBusy
+	}
+	one := sqlite.GetPanelDataByID(iID)
 
+	// 检查白名单
+	if one.URL == "" {
+		return res.CodePanelNotWhitelisted
+	}
+
+	// 为了保证服务高可用性,强制更新面板Token
+	panel.GetPanelToken(one.URL, one.ClientID, one.ClientSecret)
+	time.Sleep(time.Second)
+
+	// 读取本地数据
+	// 创建对象
+	var backup model.PanelAllEnv
+	// 打开文件
+	file, err := os.Open("./backup.json")
+	if err != nil {
+		// 打开文件时发生错误
+		zap.L().Error(err.Error())
+		return res.CodeServerBusy
+	}
+	// 延迟关闭
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			zap.L().Error(err.Error())
+		}
+	}(file)
+
+	// 配置读取
+	byteData, err2 := ioutil.ReadAll(file)
+	if err2 != nil {
+		// 读取配置时发生错误
+		zap.L().Error(err.Error())
+		return res.CodeServerBusy
+	}
+
+	// 数据绑定
+	err3 := json.Unmarshal(byteData, &backup.Data)
+	if err3 != nil {
+		// 数据绑定时发生错误
+		zap.L().Error(err.Error())
+		return res.CodeServerBusy
+	}
+
+	// 上传数据
+	go EnvUp(backup, one.URL, one.Token, one.Params, "恢复任务")
+
+	return res.CodeSuccess
 }
 
 // EnvUp 变量上传
@@ -147,6 +270,8 @@ func EnvUp(p model.PanelAllEnv, url, token string, params int, journal string) {
 			// 记录错误
 			sqlite.RecordingError(journal, err.Error())
 		}
+		// 休息0.5秒
+		time.Sleep(time.Second / 2)
 	}
 }
 

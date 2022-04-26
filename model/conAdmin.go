@@ -6,7 +6,9 @@
 
 package model
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 // OperationRecord 日志记录数据表
 type OperationRecord struct {
@@ -32,18 +34,13 @@ type BackupM struct {
 	IDOne int `json:"IDOne"`
 }
 
-// RestoreM 容器：恢复数据
-type RestoreM struct {
-	IDOne int `json:"IDOne"`
-}
-
 // PanelAllEnv 面板全部变量数据
 type PanelAllEnv struct {
 	Code int      `json:"code"`
-	Data []allEnv `json:"data"`
+	Data []AllEnv `json:"data"`
 }
 
-type allEnv struct {
+type AllEnv struct {
 	ID      int    `json:"ID"`
 	Name    string `json:"name"`
 	Value   string `json:"value"`

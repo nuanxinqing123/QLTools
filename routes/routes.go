@@ -120,6 +120,10 @@ func Setup() *gin.Engine {
 			ad.POST("container/backup", controllers.Backup)
 			// 容器：恢复
 			ad.POST("container/restore", controllers.Restore)
+			// 容器：十条记录
+			ad.GET("container/info")
+			// 容器：下载备份数据
+			ad.POST("container/backup/data", controllers.BackupDownload)
 
 			// 设置：获取全部配置
 			ad.GET("set/settings", controllers.GetSettings)
