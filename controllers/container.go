@@ -150,6 +150,7 @@ func BackupDownload(c *gin.Context) {
 	Filename := "backup.json"
 	c.Writer.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=%s", Filename))
 	c.File("./" + Filename)
+	go logic.DelBackupJSON()
 }
 
 // Info 容器：十条日志

@@ -251,7 +251,8 @@ func Restore(sID string) res.ResCode {
 
 	// 上传数据
 	go EnvUp(backup, one.URL, one.Token, one.Params, "恢复任务")
-
+	// 删除本地数据
+	go DelBackupJSON()
 	return res.CodeSuccess
 }
 
@@ -290,4 +291,13 @@ func GetConInfo() ([]model.OperationRecord, res.ResCode) {
 	// 查询记录
 	info := sqlite.GetConData()
 	return info, res.CodeSuccess
+}
+
+// DelBackupJSON 删除本地数据
+func DelBackupJSON() {
+	time.Sleep(time.Second * 5)
+	err := os.Remove("backup.json")
+	if err != nil {
+		zap.L().Error(err.Error())
+	}
 }
