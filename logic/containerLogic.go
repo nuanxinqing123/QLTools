@@ -217,7 +217,6 @@ func Restore(sID string) res.ResCode {
 	time.Sleep(time.Second)
 
 	// 读取本地数据
-	// 创建对象
 	var backup model.PanelAllEnv
 	// 打开文件
 	file, err := os.Open("./backup.json")
@@ -284,4 +283,11 @@ func EnvDel(p string, url, token string, params int, journal string) {
 		// 记录错误
 		sqlite.RecordingError(journal, err.Error())
 	}
+}
+
+// GetConInfo 获取十条日志记录
+func GetConInfo() ([]model.OperationRecord, res.ResCode) {
+	// 查询记录
+	info := sqlite.GetConData()
+	return info, res.CodeSuccess
 }

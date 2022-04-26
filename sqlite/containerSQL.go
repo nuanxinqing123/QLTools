@@ -17,3 +17,11 @@ func RecordingError(journal, info string) {
 	er.Operation = journal
 	DB.Create(&er)
 }
+
+// GetConData 获取十条错误记录
+func GetConData() []model.OperationRecord {
+	var i []model.OperationRecord
+	sqlStr := "SELECT `created_at`, `journal`, `operation` FROM `operation_records` order by id desc limit 0,10;"
+	DB.Raw(sqlStr).Scan(&i)
+	return i
+}

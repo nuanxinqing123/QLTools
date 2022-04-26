@@ -103,7 +103,7 @@ func GetIPInfo(c *gin.Context) {
 	bol, resCode := logic.GetIPInfo()
 	switch resCode {
 	case res.CodeSuccess:
-		// 修改成功
+		// 获取成功
 		res.ResSuccess(c, bol)
 	}
 }

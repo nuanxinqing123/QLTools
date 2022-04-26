@@ -151,3 +151,14 @@ func BackupDownload(c *gin.Context) {
 	c.Writer.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=%s", Filename))
 	c.File("./" + Filename)
 }
+
+// Info 容器：十条日志
+func Info(c *gin.Context) {
+	// 处理业务
+	info, resCode := logic.GetConInfo()
+	switch resCode {
+	case res.CodeSuccess:
+		// 获取成功
+		res.ResSuccess(c, info)
+	}
+}
