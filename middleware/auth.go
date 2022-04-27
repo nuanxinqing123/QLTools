@@ -19,9 +19,7 @@ const CtxUserIDKey = "userID"
 // UserAuth 基于JWT的认证中间件
 func UserAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 客户端携带Token有三种方式 1.放在请求头 2.放在请求体 3.放在URI
-		// 这里假设Token放在Header的Authorization中，并使用Bearer开头
-		// 这里的具体实现方式要依据你的实际业务情况决定
+		// Token放在Header的Authorization中，并使用Bearer开头
 		authHeader := c.Request.Header.Get("Authorization")
 		if authHeader == "" {
 			res.ResError(c, res.CodeNeedLogin)
