@@ -7,6 +7,7 @@
 package logic
 
 import (
+	_const "QLPanelTools/const"
 	"QLPanelTools/model"
 	"QLPanelTools/tools/requests"
 	res "QLPanelTools/tools/response"
@@ -17,7 +18,6 @@ import (
 // CheckVersion 检查版本更新
 func CheckVersion() (model.WebVer, res.ResCode) {
 	// 版本号
-	var Version = "1.0"
 	var v model.Ver
 	var w model.WebVer
 	// 获取仓库版本信息
@@ -33,7 +33,7 @@ func CheckVersion() (model.WebVer, res.ResCode) {
 		return w, res.CodeServerBusy
 	}
 
-	if v.Version != Version {
+	if v.Version != _const.Version {
 		w.Update = true
 	} else {
 		w.Update = false

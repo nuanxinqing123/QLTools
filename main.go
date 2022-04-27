@@ -7,6 +7,7 @@
 package main
 
 import (
+	_const "QLPanelTools/const"
 	"QLPanelTools/logger"
 	"QLPanelTools/routes"
 	"QLPanelTools/settings"
@@ -33,7 +34,7 @@ func main() {
 	// 判断注册默认配置文件
 	bol := IFConfig("config/config.yaml")
 	if bol != true {
-		fmt.Println("自动生成配置文件失败, 请按照仓库内容手动在config/config.yaml下创建配置文件")
+		fmt.Println("自动生成配置文件失败, 请按照仓库的配置文件模板手动在config目录下创建config.yaml配置文件")
 		return
 	}
 
@@ -95,7 +96,7 @@ func main() {
 | | /\| || |      | |   | |   | || |   | || |           ) |
 | (_\ \ || (____/\| |   | (___) || (___) || (____/Y\____) |
 (____\/_)(_______/)_(   (_______)(_______)(_______|_______)`)
-	fmt.Println("当前系统版本：1.0【G3内测版】")
+	fmt.Println("当前系统版本：" + _const.Version + "【G3内测版】")
 	fmt.Println("服务监听端口:" + strconv.Itoa(viper.GetInt("app.port")))
 	zap.L().Info("服务监听端口:" + strconv.Itoa(viper.GetInt("app.port")))
 
