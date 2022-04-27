@@ -295,7 +295,7 @@ func GetConInfo() ([]model.OperationRecord, res.ResCode) {
 
 // DelBackupJSON 删除本地数据
 func DelBackupJSON() {
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 10)
 	err := os.Remove("backup.json")
 	if err != nil {
 		zap.L().Error(err.Error())

@@ -13,8 +13,9 @@ import (
 // OperationRecord 日志记录数据表
 type OperationRecord struct {
 	gorm.Model
-	Operation string // 操作方式
-	Journal   string // 记录日志
+	OccurrenceTime string // 发生时间
+	Operation      string // 操作方式
+	Journal        string // 记录日志
 }
 
 // TransferM 容器：迁移数据

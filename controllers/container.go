@@ -119,7 +119,7 @@ func Restore(c *gin.Context) {
 	// 获取参数
 	sID := c.Query("sID")
 	file, _ := c.FormFile("file")
-
+	zap.L().Debug(file.Filename)
 	// 规范文件名称
 	if file.Filename != "backup.json" {
 		res.ResError(c, res.CodeNotStandardized)
