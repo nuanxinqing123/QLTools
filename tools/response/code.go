@@ -38,6 +38,7 @@ const (
 	CodeDataIsNull
 	CodePanelNotWhitelisted
 	CodeNotStandardized
+	CodeNoDuplicateSubmission
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -63,13 +64,14 @@ var codeMsgMap = map[ResCode]string{
 	CodeErrorOccurredInTheRequest: "请求发生错误",
 	CodeStorageFailed:             "发生一点小意外，请重新提交",
 
-	CodeCheckDataNotExist:   "查询信息为空",
-	CodeOldPassWordError:    "旧密码错误",
-	CodeEnvDataMismatch:     "上传内容不符合规定",
-	CodeLocationFull:        "限额已满，禁止提交",
-	CodeDataIsNull:          "提交内容不能为空",
-	CodePanelNotWhitelisted: "提交服务器不在白名单",
-	CodeNotStandardized:     "提交数据不规范",
+	CodeCheckDataNotExist:     "查询信息为空",
+	CodeOldPassWordError:      "旧密码错误",
+	CodeEnvDataMismatch:       "上传内容不符合规定",
+	CodeLocationFull:          "限额已满，禁止提交",
+	CodeDataIsNull:            "提交内容不能为空",
+	CodePanelNotWhitelisted:   "提交服务器不在白名单",
+	CodeNotStandardized:       "提交数据不规范",
+	CodeNoDuplicateSubmission: "禁止提交重复数据",
 }
 
 func (c ResCode) Msg() string {

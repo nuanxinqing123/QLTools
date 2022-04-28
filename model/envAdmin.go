@@ -11,9 +11,11 @@ import "gorm.io/gorm"
 // EnvName 变量名
 type EnvName struct {
 	gorm.Model
-	Name     string `binding:"required"`
+	Name     string `binding:"required"` // 环境变量名称
 	Quantity int    `binding:"required"` // 环境变量数量上限
-	Regex    string
+	Regex    string // 环境变量匹配正则
+	Mode     int    `binding:"required"` // 环境变量模式[1：新建模式、2：合并模式]
+	Division string // 环境变量分隔符（合并模式）
 }
 
 // EnvNameAdd 新增变量名
@@ -21,6 +23,8 @@ type EnvNameAdd struct {
 	EnvName     string `json:"envName" binding:"required"`
 	EnvQuantity int    `json:"envQuantity" binding:"required"`
 	EnvRegex    string `json:"envRegex"`
+	EnvMode     int    `json:"envMode" binding:"required"`
+	EnvDivision string `json:"envDivision"`
 }
 
 // EnvNameUp 修改变量名
@@ -29,6 +33,8 @@ type EnvNameUp struct {
 	EnvName     string `json:"envName" binding:"required"`
 	EnvQuantity int    `json:"envQuantity" binding:"required"`
 	EnvRegex    string `json:"envRegex"`
+	EnvMode     int    `json:"envMode" binding:"required"`
+	EnvDivision string `json:"envDivision"`
 }
 
 // EnvNameDel 删除变量名

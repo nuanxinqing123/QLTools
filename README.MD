@@ -53,20 +53,33 @@ chmod 755 QLPanelTools
 ```
 
 ## 🎯开发计划
-- 容器相互迁移&复制
 - 消息推送（推送敏感操作记录）
-- 变量新建&合并模式
-- 变量重复上传检测
 
 ## 🧩当前版本日志
-- 首页Footer部分不会自动拉伸（待修复）
+- 修复 PC端首页Footer部分不会自动拉伸
+- 新增 容器相互迁移&复制
+- 新增 变量重复上传检测
+- 新增 变量新建&合并模式
+- 新增 版本更新检查
+- 更新 上传变量的提示改为弹窗提示
 
-### 📔静态资源构建
+## 📔自行构建步骤
 ```shell
+# 项目开发环境：Golang 1.18
+# Clone 项目并进入项目目录
+git clone https://github.com/nuanxinqing123/QLTools.git && cd QLTools
+
+# 更新项目依赖
+go mod tidy
+
+# 构建前端静态文件（需要安装go-bindata）
 go-bindata -o=bindata/bindata.go -pkg=bindata ./assets/...
+
+# 打包
+go build
 ```
 
-### 📷演示图
+## 📷演示图
 
 ![1.png](https://pic.6b7.xyz/2022/04/22/b100b8eaffafc.png)
 

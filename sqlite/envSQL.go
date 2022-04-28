@@ -32,6 +32,8 @@ func AddEnvName(data *model.EnvNameAdd) (err error) {
 	e.Name = data.EnvName
 	e.Quantity = data.EnvQuantity
 	e.Regex = data.EnvRegex
+	e.Mode = data.EnvMode
+	e.Division = data.EnvDivision
 	err = DB.Create(&e).Error
 	if err != nil {
 		zap.L().Error("Insert data error, err:", zap.Error(err))
@@ -48,6 +50,8 @@ func UpdateEnvName(data *model.EnvNameUp) {
 	d.Name = data.EnvName
 	d.Quantity = data.EnvQuantity
 	d.Regex = data.EnvRegex
+	d.Mode = data.EnvMode
+	d.Division = data.EnvDivision
 	DB.Save(&d)
 }
 

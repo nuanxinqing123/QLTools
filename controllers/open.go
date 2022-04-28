@@ -186,6 +186,8 @@ func EnvADD(c *gin.Context) {
 		res.ResErrorWithMsg(c, res.CodeDataIsNull, "上传内容能为空")
 	case res.CodeLocationFull:
 		res.ResErrorWithMsg(c, res.CodeLocationFull, "限额已满，禁止提交")
+	case res.CodeNoDuplicateSubmission:
+		res.ResErrorWithMsg(c, res.CodeNoDuplicateSubmission, "禁止提交重复数据")
 	case res.CodeSuccess:
 		// 上传成功
 		res.ResSuccess(c, "上传成功")
