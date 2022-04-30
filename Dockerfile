@@ -22,6 +22,7 @@ RUN go build -o QLTools-linux-amd64 .
 
 FROM scratch
 
+COPY --from=builder go/src/QLTools/config /config
 COPY --from=builder go/src/QLTools/QLTools-linux-amd64 /
 
 ENTRYPOINT ["./QLTools-linux-amd64"]

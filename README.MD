@@ -49,7 +49,7 @@ chmod 755 QLPanelTools
 ```
 2、Docker启动
 ```shell
-目前为内/公测阶段, 不放出Docker Images
+来个大佬帮我改改Dockerfile文件,我自己搞定不了
 ```
 
 ## 🎯开发计划
