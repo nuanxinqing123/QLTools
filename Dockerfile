@@ -38,4 +38,4 @@ COPY --from=builder go/src/QLTools/cpu.sh /
 COPY --from=builder go/src/QLTools/QLTools-linux-amd64 /
 COPY --from=builder go/src/QLTools/QLTools-linux-arm64 /
 
-CMD ["sh cpu.sh"]
+ENTRYPOINT ["./cpu.sh"]
