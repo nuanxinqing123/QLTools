@@ -78,7 +78,13 @@ func EnvData() (res.ResCode, model.EnvStartServer) {
 
 			// 计算变量剩余限额
 			for x := 0; x < len(sd.ServerData[i].EnvData); x++ {
-				sd.ServerData[i].EnvData[x].Quantity, _, _ = CalculateQuantity(sd.ServerData[i].ID, sd.ServerData[i].EnvData[x].Name)
+				if envData[x].Mode == 1 {
+					// 新建模式
+					sd.ServerData[i].EnvData[x].Quantity, _, _ = CalculateQuantity(sd.ServerData[i].ID, envData[x].Mode, sd.ServerData[i].EnvData[x].Name, "")
+				} else {
+					// 合并模式
+					sd.ServerData[i].EnvData[x].Quantity, _, _ = CalculateQuantity(sd.ServerData[i].ID, envData[x].Mode, sd.ServerData[i].EnvData[x].Name, envData[x].Division)
+				}
 			}
 		}
 	}
@@ -138,7 +144,7 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 	}
 
 	// 校验变量配额
-	c, t, code := CalculateQuantity(p.ServerID, p.EnvName)
+	c, t, code := CalculateQuantity(p.ServerID, eData.Mode, p.EnvName, eData.Division)
 	if code == res.CodeServerBusy {
 		zap.L().Debug("处理正则失败")
 		return res.CodeServerBusy
@@ -231,7 +237,7 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 }
 
 // CalculateQuantity 计算变量剩余位置
-func CalculateQuantity(id int, name string) (int, model.EnvData, res.ResCode) {
+func CalculateQuantity(id, mode int, name string, division string) (int, model.EnvData, res.ResCode) {
 	var token model.EnvData
 	// 获取变量数据
 	count := sqlite.GetEnvNameCount(name)
@@ -254,9 +260,22 @@ func CalculateQuantity(id int, name string) (int, model.EnvData, res.ResCode) {
 
 	// 计算变量剩余限额
 	c := count
-	for i := 0; i < len(token.Data); i++ {
-		if token.Data[i].Name == name {
-			c--
+	if mode == 1 {
+		// 新建模式
+		for i := 0; i < len(token.Data); i++ {
+			if token.Data[i].Name == name {
+				c--
+			}
+		}
+	} else {
+		// 合并模式
+		if len(token.Data) != 0 {
+			for i := 0; i < len(token.Data); i++ {
+				if token.Data[i].Name == name {
+					c -= len(strings.Split(token.Data[i].Value, division))
+					break
+				}
+			}
 		}
 	}
 
