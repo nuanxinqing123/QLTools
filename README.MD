@@ -47,7 +47,11 @@ chmod 755 QLPanelTools
 # 上传程序二进制文件后启动
 ./QLPanelTools
 ```
-2、Docker启动
+2、Supervisord & PM2 & nohup 启动守护
+
+教程地址：[青龙Tools的后台进程守护教程（附反代域名）](https://6b7.org/460.html)
+
+3、Docker启动
 ```shell
 来个大佬帮我改改Dockerfile文件,我自己搞定不了
 ```
