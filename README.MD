@@ -38,21 +38,26 @@ app:
 ```
 
 ## 🔍安装教程
-1、直接启动
+1、Supervisord & PM2 & nohup 启动守护
 ```shell
-# 创建目录,自己夺定合适上级目录
-mkdir qltools && cd qltools
-# 赋予权限
-chmod 755 QLPanelTools
-# 上传程序二进制文件后启动
-./QLPanelTools
+# 创建目录并进入
+mkdir QLTools && cd QLTools
+
+# 给予权限
+chmod 755 程序名称
+
+# 启动程序排查启动错误
+./程序名称
+
+# 程序无误后点击下方教程查看程序后台守护教程
 ```
-2、Supervisord & PM2 & nohup 启动守护
 
 教程地址：[青龙Tools的后台进程守护教程（附反代域名）](https://6b7.org/460.html)
 
 3、Docker启动
 ```shell
+暂无Docker版本,使用CGO环境编译的Go的Dockerfile我写不出来
+
 来个大佬帮我改改Dockerfile文件,我自己搞定不了
 ```
 
