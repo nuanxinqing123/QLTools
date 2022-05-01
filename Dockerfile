@@ -1,28 +1,44 @@
-FROM amd64/golang:latest AS builder
+FROM --platform=$BUILDPLATFORM alpine:3.15 AS builder
 
-MAINTAINER HomeNavigation "nuanxinqing@gmail.com"
+ARG TARGETARCH
 
-WORKDIR $GOPATH/src/QLTools
-
-COPY . .
-
-ADD . ./
-
-# Setting up the AMD64 environment
 ENV GO111MODULE=on \
     CGO_ENABLED=1 \
     GOOS=linux \
-    GOARCH=amd64 \
     GOPROXY=https://goproxy.cn,direct
 
-# Processing package
-RUN go mod tidy
+WORKDIR $GOPATH/src/QLTools
 
-RUN go build -o QLTools-linux-amd64 .
+# 安装必要环境
+RUN \
+  sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
+  apk add --no-cache --update go go-bindata g++ ca-certificates tzdata
 
-FROM scratch
+COPY ./go.mod ./
+COPY ./go.sum ./
+RUN go mod download
 
-COPY --from=builder go/src/QLTools/config /config
-COPY --from=builder go/src/QLTools/QLTools-linux-amd64 /
+COPY . .
 
-ENTRYPOINT ["./QLTools-linux-amd64"]
+# 打包项目文件
+RUN \
+  go-bindata -o=bindata/bindata.go -pkg=bindata ./assets/... && \
+  go build -ldflags "-s -w" -o QLTools-linux-$TARGETARCH . && \
+  
+
+FROM alpine:3.15
+
+MAINTAINER HomeNavigation "nuanxinqing@gmail.com"
+
+ARG TARGETARCH
+ENV TARGETARCH=$TARGETARCH
+
+WORKDIR /QLTools
+
+COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder $GOPATH/src/QLTools/QLTools-linux-$TARGETARCH $GOPATH/src/QLTools/config $GOPATH/src/QLTools/docker-entrypoint.sh .
+
+EXPOSE 15000
+
+ENTRYPOINT ["sh", "docker-entrypoint.sh"]
