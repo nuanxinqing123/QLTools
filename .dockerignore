@@ -1,0 +1,5 @@
+Dockerfile
+.dockerignore
+README.*
+.github
+.git
