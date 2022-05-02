@@ -28,7 +28,7 @@ RUN \
 
 FROM alpine:3.15
 
-MAINTAINER HomeNavigation "nuanxinqing@gmail.com"
+MAINTAINER QLTools "nuanxinqing@gmail.com"
 
 ARG TARGETARCH
 ENV TARGET_ARCH=$TARGETARCH

@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: 构建QLTtools镜像到docker
+name: 构建QLTtools镜像到Docker
 
 # Controls when the action will run. 
 on:
@@ -19,7 +19,8 @@ on:
         required: true
         default: 'warning'
       tags:
-        description: 'Test scenario tags'  
+        required: false
+        description: 'Test scenario tags'
 
 jobs:
   buildx:
@@ -54,7 +55,7 @@ jobs:
           context: .	# 工作目录
           file: ./Dockerfile	#构建文件路径
 # 所需要的体系结构，可以在 Available platforms 步骤中获取所有的可用架构
-          platforms: linux/amd64,linux/arm64/v8,linux/arm/v7,linux/arm/v6,linux/386,linux/s390x,linux/ppc64le
+          platforms: linux/amd64,linux/arm64/v8,linux/arm/v7
 # 镜像推送时间
           push: ${{ github.event_name != 'pull_request' }}
 # 给清单打上多个标签
