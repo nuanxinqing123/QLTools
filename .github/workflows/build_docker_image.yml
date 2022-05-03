@@ -60,5 +60,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
 # 给清单打上多个标签
           tags: |
-            nuanxinqing123/qltoos:latest
-            nuanxinqing123/qltoos:1.0
+            nuanxinqing123/qltloos:latest
+            nuanxinqing123/qltloos:1.0
