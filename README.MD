@@ -54,16 +54,26 @@ chmod 755 程序名称
 
 教程地址：[青龙Tools的后台进程守护教程（附反代域名）](https://6b7.org/460.html)
 
-3、Docker启动
+2、Docker启动
 ```shell
-暂无Docker版本,使用CGO环境编译的Go的Dockerfile我写不出来
+# 创建QLTools目录并进入
+mkdir qltools && cd qltools
 
-来个大佬帮我改改Dockerfile文件,我自己搞定不了
+# Docker版本提供架构：amd64、arm64、arm-7
+docker run -itd --name QLTools -v $PWD/config:/QLTools/config -p 15000:15000 nuanxinqing123/qltloos:1.0
+
+# 更新步骤：因为当前版本不支持热更新，所以需要暂停并删除容器，重新拉取新版本镜像后在qltools目录里面重新启动
 ```
 
 ## 🎯开发计划
 
-开发计划 & 进度：[点击查看](https://web.banlikanban.com/kanban/626f9b4c6ade1220282ac551/%E6%AC%A2%E8%BF%8E%E6%9F%A5%E7%9C%8B%E6%9D%BF%E6%A0%97%E7%9C%8B%E6%9D%BF%E3%80%8C%E9%9D%92%E9%BE%99Tools%20%E5%BC%80%E5%8F%91%E8%BF%9B%E5%BA%A6%E6%9D%BF%E3%80%8D)
+开发计划 & 进度：[点击查看](https://web.banlikanban.com/kanban/626f9b4c6ade1220282ac551)
+
+招募一位热心愿意一起开发的前端小伙伴，嘿嘿。我前端太差了
+
+TG：https://t.me/Nuanxinqing
+
+Email：nuanxinqing@gmail.com
 
 ## 🧩当前版本日志
 - 修复 合并模式限额统计错误
