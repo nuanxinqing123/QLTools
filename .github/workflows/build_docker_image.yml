@@ -19,8 +19,8 @@ on:
         required: true
         default: 'warning'
       tags:
-        required: false
-        description: 'Test scenario tags'
+        required: true
+        description: '请填写镜像版本号，如1.0'
 
 jobs:
   buildx:
@@ -60,5 +60,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
 # 给清单打上多个标签
           tags: |
-            nuanxinqing123/qltloos:latest
-            nuanxinqing123/qltloos:1.0
+            nuanxinqing123/qltools:latest
+            nuanxinqing123/qltools:${{github.event.inputs.tags}}
