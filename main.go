@@ -97,7 +97,7 @@ func main() {
 | (_\ \ || (____/\| |   | (___) || (___) || (____/Y\____) |
 (____\/_)(_______/)_(   (_______)(_______)(_______|_______)`)
 	fmt.Println(" ")
-	fmt.Println("当前系统版本：" + _const.Version + "【G3内测版】")
+	fmt.Println("当前系统版本：" + _const.Version)
 	fmt.Println("服务监听端口:" + strconv.Itoa(viper.GetInt("app.port")))
 	fmt.Println(" ")
 	zap.L().Info("服务监听端口:" + strconv.Itoa(viper.GetInt("app.port")))
