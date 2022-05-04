@@ -9,6 +9,7 @@ package controllers
 import (
 	"QLPanelTools/logic"
 	"QLPanelTools/model"
+	"QLPanelTools/sqlite"
 	res "QLPanelTools/tools/response"
 	val "QLPanelTools/tools/validator"
 	"github.com/gin-gonic/gin"
@@ -170,9 +171,17 @@ func EnvADD(c *gin.Context) {
 		res.ResErrorWithMsg(c, res.CodeInvalidParam, val.RemoveTopStruct(errs.Translate(val.Trans)))
 		return
 	}
-
+	// 查询请求IP是否受限
+	resCode := logic.CheckIPIfItNormal(c.ClientIP())
+	if resCode == res.CodeNumberDepletion {
+		res.ResErrorWithMsg(c, res.CodeNumberDepletion, "今日提交已到达上限")
+		return
+	} else if resCode == res.CodeServerBusy {
+		res.ResErrorWithMsg(c, res.CodeServerBusy, "服务繁忙,请稍后重试")
+		return
+	}
 	// 业务处理
-	resCode := logic.EnvAdd(p)
+	resCode = logic.EnvAdd(p)
 	switch resCode {
 	case res.CodeServerBusy:
 		res.ResErrorWithMsg(c, res.CodeServerBusy, "服务繁忙,请稍后重试")
@@ -188,8 +197,11 @@ func EnvADD(c *gin.Context) {
 		res.ResErrorWithMsg(c, res.CodeLocationFull, "限额已满，禁止提交")
 	case res.CodeNoDuplicateSubmission:
 		res.ResErrorWithMsg(c, res.CodeNoDuplicateSubmission, "禁止提交重复数据")
+	case res.CodeBlackListEnv:
+		res.ResErrorWithMsg(c, res.CodeBlackListEnv, "变量已被管理员禁止提交")
 	case res.CodeSuccess:
 		// 上传成功
+		go sqlite.InsertSubmitRecord(c.ClientIP())
 		res.ResSuccess(c, "上传成功")
 	}
 }

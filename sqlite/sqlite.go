@@ -32,6 +32,7 @@ func Init() *gorm.DB {
 		&model.LoginRecord{},
 		&model.WebSettings{},
 		&model.OperationRecord{},
+		&model.IPSubmitRecord{},
 	)
 	if err != nil {
 		zap.L().Error("SQLite 自动迁移失败")
@@ -39,4 +40,29 @@ func Init() *gorm.DB {
 	}
 
 	return DB
+}
+
+func InitWebSettings() {
+	// 判断Settings是否是第一次创建
+	settings, err := GetSettings()
+	if err != nil {
+		zap.L().Error("InitWebSettings 发生错误")
+		panic(err.Error())
+	}
+
+	if len(settings) == 0 {
+		zap.L().Debug("Init WebSettings")
+		p := &[]model.WebSettings{
+			{Key: "notice", Value: ""},
+			{Key: "blacklist", Value: ""},
+			{Key: "backgroundImage", Value: ""},
+			{Key: "ipCount", Value: "0"},
+		}
+
+		err = SaveSettings(p)
+		if err != nil {
+			zap.L().Error("InitWebSettings 发生错误")
+			panic(err.Error())
+		}
+	}
 }

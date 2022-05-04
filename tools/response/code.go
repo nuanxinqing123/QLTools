@@ -39,6 +39,8 @@ const (
 	CodePanelNotWhitelisted
 	CodeNotStandardized
 	CodeNoDuplicateSubmission
+	CodeBlackListEnv
+	CodeNumberDepletion
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -72,6 +74,8 @@ var codeMsgMap = map[ResCode]string{
 	CodePanelNotWhitelisted:   "提交服务器不在白名单",
 	CodeNotStandardized:       "提交数据不规范",
 	CodeNoDuplicateSubmission: "禁止提交重复数据",
+	CodeBlackListEnv:          "存在于黑名单的变量",
+	CodeNumberDepletion:       "次数耗尽",
 }
 
 func (c ResCode) Msg() string {

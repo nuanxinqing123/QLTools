@@ -8,9 +8,11 @@ package sqlite
 
 import (
 	"QLPanelTools/model"
+	"QLPanelTools/tools/timeTools"
 	"go.uber.org/zap"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // CheckEnvName 检查变量名是否存在
@@ -99,4 +101,29 @@ func GetEnvNameCount(name string) int {
 	var env model.EnvName
 	DB.Where("name = ?", name).First(&env)
 	return env.Quantity
+}
+
+// CheckIPCount 查询IP今日已上传次数
+func CheckIPCount(ip string, value string) bool {
+	var p string
+	todayTime := timeTools.SwitchTimeStampToDataYear(time.Now().Unix())
+	sqlStr := "SELECT count(ip_address) FROM `ip_submit_records` WHERE submit_time = '" + todayTime + "' AND ip_address = '" + ip + "'"
+	DB.Raw(sqlStr).Scan(&p)
+
+	// 判断是否超出限制
+	a, _ := strconv.Atoi(p)
+	b, _ := strconv.Atoi(value)
+	if a >= b {
+		return true
+	} else {
+		return false
+	}
+}
+
+// InsertSubmitRecord 记录上传IP
+func InsertSubmitRecord(ip string) {
+	var lr model.IPSubmitRecord
+	lr.SubmitTime = timeTools.SwitchTimeStampToDataYear(time.Now().Unix())
+	lr.IPAddress = ip
+	DB.Create(&lr)
 }

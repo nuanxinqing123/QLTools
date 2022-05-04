@@ -13,3 +13,9 @@ func SwitchTimeStampToData(timeStamp int64) string {
 	t := time.Unix(timeStamp, 0)
 	return t.Format("2006-01-02 15:04:05")
 }
+
+// SwitchTimeStampToDataYear 将传入的时间戳转为时间
+func SwitchTimeStampToDataYear(timeStamp int64) string {
+	t := time.Unix(timeStamp, 0)
+	return t.Format("2006-01-02")
+}

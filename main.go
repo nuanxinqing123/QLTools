@@ -56,6 +56,7 @@ func main() {
 
 	// 初始化数据库
 	sqlite.Init()
+	sqlite.InitWebSettings()
 	zap.L().Debug("SQLite success init ...")
 
 	// 初始化翻译器

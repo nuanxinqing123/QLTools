@@ -21,7 +21,14 @@ func GetSetting(name string) (model.WebSettings, res.ResCode) {
 		return data, res.CodeServerBusy
 	}
 
-	return data, res.CodeSuccess
+	// 限制前端只能获取公告信息
+	if name == "notice" {
+		return data, res.CodeSuccess
+	} else if name == "backgroundImage" {
+		return data, res.CodeSuccess
+	} else {
+		return data, res.CodeServerBusy
+	}
 }
 
 // GetSettings 获取所有配置信息

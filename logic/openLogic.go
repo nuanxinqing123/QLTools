@@ -93,6 +93,8 @@ func EnvData() (res.ResCode, model.EnvStartServer) {
 
 // EnvAdd 添加变量
 func EnvAdd(p *model.EnvAdd) res.ResCode {
+	var err error
+
 	// 不允许内容为空
 	if p.EnvData == "" {
 		return res.CodeDataIsNull
@@ -126,7 +128,7 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 		return res.CodeErrorOccurredInTheRequest
 	}
 
-	// 正则处理
+	// 正则处理(检查是否符合规则)
 	var s [][]string
 	if eData.Regex != "" {
 		// 需要处理正则
@@ -140,6 +142,24 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 			}
 		} else {
 			return res.CodeServerBusy
+		}
+	}
+
+	// 正则处理(检查是否属于黑名单)
+	list, err := sqlite.GetSetting("blacklist")
+	if err != nil {
+		zap.L().Error(err.Error())
+		return res.CodeServerBusy
+	}
+	if list.Value != "" {
+		// 如果黑名单不为空,正则匹配是否属于黑名单
+		breakList := strings.Split(list.Value, "@")
+		for i := 0; i < len(breakList); i++ {
+			reg := regexp.MustCompile(breakList[i])
+			s = reg.FindAllStringSubmatch(p.EnvData, -1)
+			if len(s) != 0 {
+				return res.CodeBlackListEnv
+			}
 		}
 	}
 
@@ -202,7 +222,6 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 	}
 	zap.L().Debug(data)
 	var r []byte
-	var err error
 	if eData.Mode == 1 {
 		// 新建模式(POST)
 		r, err = requests.Requests("POST", url, data, sData.Token)
@@ -327,4 +346,22 @@ func CheckRepeat(p model.EnvData, env, name string, data model.EnvName) (bool, i
 		}
 	}
 	return false, QCount
+}
+
+// CheckIPIfItNormal 校验IP是否受限
+func CheckIPIfItNormal(ip string) res.ResCode {
+	list, err := sqlite.GetSetting("ipCount")
+	if err != nil {
+		zap.L().Error(err.Error())
+		return res.CodeServerBusy
+	}
+	if list.Value != "0" {
+		// 计算此IP今日上传次数
+		bol := sqlite.CheckIPCount(ip, list.Value)
+		if bol != false {
+			return res.CodeNumberDepletion
+		}
+	}
+
+	return res.CodeSuccess
 }

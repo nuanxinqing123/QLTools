@@ -71,13 +71,15 @@ docker run -itd --name QLTools -v $PWD/config:/QLTools/config -p 15000:15000 nua
 
 招募一位热心愿意一起开发的前端小伙伴，嘿嘿。我前端太差了
 
-TG：https://t.me/Nuanxinqing
+TG：[https://t.me/Nuanxinqing](https://t.me/Nuanxinqing)
 
 Email：nuanxinqing@gmail.com
 
 ## 🧩当前版本日志
-- 修复 合并模式限额统计错误
-- 补充 容器变量的备份&恢复功能
+- 修复 前端公告接口存在越权危险
+- 新增 变量黑名单（阻挡不愿意让提交的变量）
+- 新增 网站自定义背景图
+- 新增 IP提交次数限制
 
 ## 📔自行构建步骤
 ```shell

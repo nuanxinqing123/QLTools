@@ -32,7 +32,6 @@ func CheckVersion() (model.WebVer, res.ResCode) {
 		zap.L().Error(err.Error())
 		return w, res.CodeServerBusy
 	}
-
 	if v.Version != _const.Version {
 		w.Update = true
 	} else {
