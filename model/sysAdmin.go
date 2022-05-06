@@ -12,6 +12,7 @@ type Ver struct {
 }
 
 type WebVer struct {
-	Update bool   `json:"Update"`
-	Notice string `json:"Notice"`
+	Update  bool   `json:"Update"`
+	Version string `json:"Version"`
+	Notice  string `json:"Notice"`
 }

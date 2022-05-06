@@ -38,6 +38,7 @@ func CheckVersion() (model.WebVer, res.ResCode) {
 		w.Update = false
 	}
 	w.Notice = v.Notice
+	w.Version = _const.Version
 
 	return w, res.CodeSuccess
 }
