@@ -67,6 +67,7 @@ func RunJS(filename, env string) (bool, int, string, error) {
 	// 注册JS方法
 	vm.Set("Request", Request)
 	vm.Set("request", request)
+	vm.Set("console", console)
 	_, err = vm.RunString(template)
 	if err != nil {
 		// JS代码有问题
@@ -88,6 +89,15 @@ func RunJS(filename, env string) (bool, int, string, error) {
 		return false, 0, "", err
 	}
 	json.Unmarshal(marshal, &j)
+
+	if j.Bool {
+		zap.L().Debug("true")
+	} else {
+		zap.L().Debug("false")
+	}
+	zap.L().Debug(strconv.Itoa(j.Mode))
+	zap.L().Debug(j.Env)
+
 	return j.Bool, j.Mode, j.Env, nil
 }
 
@@ -195,10 +205,12 @@ func request(wt interface{}, handles ...func(error, map[string]interface{}, inte
 		rspObj["statusCode"] = rsp.StatusCode
 		data, _ := ioutil.ReadAll(rsp.Body)
 		if isJson {
+			zap.L().Debug("返回数据类型：JSON")
 			var v interface{}
 			json.Unmarshal(data, &v)
 			bd = v
 		} else {
+			zap.L().Debug("返回数据类型：Not Is JSON")
 			bd = string(data)
 		}
 		rspObj["body"] = bd
@@ -218,6 +230,70 @@ func request(wt interface{}, handles ...func(error, map[string]interface{}, inte
 // Request HTTP请求方法
 func Request() interface{} {
 	return request
+}
+
+// console 方法
+var console = map[string]func(...interface{}){
+	"info": func(v ...interface{}) {
+		if len(v) == 0 {
+			return
+		}
+		if len(v) == 1 {
+			msg := fmt.Sprintf("Info: %s", v[0])
+			fmt.Println(msg)
+			return
+		}
+		msg := fmt.Sprintf("Info: %s", v)
+		fmt.Println(msg)
+	},
+	"debug": func(v ...interface{}) {
+		if len(v) == 0 {
+			return
+		}
+		if len(v) == 1 {
+			msg := fmt.Sprintf("Debug: %s", v[0])
+			fmt.Println(msg)
+			return
+		}
+		msg := fmt.Sprintf("Debug: %s", v)
+		fmt.Println(msg)
+	},
+	"warn": func(v ...interface{}) {
+		if len(v) == 0 {
+			return
+		}
+		if len(v) == 1 {
+			msg := fmt.Sprintf("Warn: %s", v[0])
+			fmt.Println(msg)
+			return
+		}
+		msg := fmt.Sprintf("Warn: %s", v)
+		fmt.Println(msg)
+	},
+	"error": func(v ...interface{}) {
+		if len(v) == 0 {
+			return
+		}
+		if len(v) == 1 {
+			msg := fmt.Sprintf("Error: %s", v[0])
+			fmt.Println(msg)
+			return
+		}
+		msg := fmt.Sprintf("Error: %s", v)
+		fmt.Println(msg)
+	},
+	"log": func(v ...interface{}) {
+		if len(v) == 0 {
+			return
+		}
+		if len(v) == 1 {
+			msg := fmt.Sprintf("Info: %s", v[0])
+			fmt.Println(msg)
+			return
+		}
+		msg := fmt.Sprintf("Info: %s", v)
+		fmt.Println(msg)
+	},
 }
 
 // Int64 转换Int64
