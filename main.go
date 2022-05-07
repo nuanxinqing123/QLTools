@@ -25,6 +25,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strconv"
 	"syscall"
 	"time"
@@ -35,6 +36,12 @@ func main() {
 	bol := IFConfig("config/config.yaml")
 	if bol != true {
 		fmt.Println("自动生成配置文件失败, 请按照仓库的配置文件模板手动在config目录下创建config.yaml配置文件")
+		return
+	}
+	// 判断注册插件文件夹
+	bol = IFPlugin()
+	if bol != true {
+		fmt.Println("自动创建插件文件夹失败, 请手动在程序根目录创建 plugin 文件夹")
 		return
 	}
 
@@ -185,4 +192,28 @@ func IFConfig(src string) bool {
 	} else {
 		return true
 	}
+}
+
+// IFPlugin 判断并自动创建插件文件夹
+func IFPlugin() bool {
+	ExecPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		zap.L().Error(err.Error())
+		return false
+	}
+	_, err = os.Stat(ExecPath + "/plugin")
+	if err != nil {
+		err = os.Mkdir("plugin", 0777)
+		if err != nil {
+			fmt.Printf("Create Config Dir Error: %s", err)
+			return false
+		}
+		_, err2 := os.Stat(ExecPath + "/plugin")
+		if err2 != nil {
+			zap.L().Error(err.Error())
+			return false
+		}
+	}
+
+	return true
 }
