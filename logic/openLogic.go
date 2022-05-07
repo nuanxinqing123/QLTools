@@ -228,11 +228,22 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		} else {
 			// 匹配成功, 从青龙面板匹配变量
 			key := s[0][0]
+			co := 0
 			for i := 0; i < len(t.Data); i++ {
 				e := reg.FindAllStringSubmatch(t.Data[i].Value, -1)
-				if e[0][0] == key {
-					data = `{"id": "` + strconv.Itoa(t.Data[i].ID) + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+				if len(e) != 0 {
+					if e[0][0] == key {
+						QCount = 100
+						data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+					}
+				} else {
+					co++
+					continue
 				}
+			}
+			if co == len(t.Data) {
+				data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
+				QCount = -1
 			}
 		}
 	}
