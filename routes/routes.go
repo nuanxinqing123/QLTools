@@ -125,6 +125,13 @@ func Setup() *gin.Engine {
 			// 容器：下载备份数据
 			ad.POST("container/backup/data", controllers.BackupDownload)
 
+			// 插件：上传插件
+			ad.POST("javascript/upload", controllers.JavascriptUpload)
+			// 插件：删除插件
+			ad.POST("javascript/delete", controllers.JavascriptDelete)
+			// 插件：读取plugin目录下所有插件
+			ad.GET("javascript/readall", controllers.JavascriptReadall)
+
 			// 设置：获取全部配置
 			ad.GET("set/settings", controllers.GetSettings)
 			// 设置：修改网站配置信息

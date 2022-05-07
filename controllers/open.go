@@ -181,7 +181,7 @@ func EnvADD(c *gin.Context) {
 		return
 	}
 	// 业务处理
-	resCode = logic.EnvAdd(p)
+	resCode, msg := logic.EnvAdd(p)
 	switch resCode {
 	case res.CodeServerBusy:
 		res.ResErrorWithMsg(c, res.CodeServerBusy, "服务繁忙,请稍后重试")
@@ -199,6 +199,12 @@ func EnvADD(c *gin.Context) {
 		res.ResErrorWithMsg(c, res.CodeNoDuplicateSubmission, "禁止提交重复数据")
 	case res.CodeBlackListEnv:
 		res.ResErrorWithMsg(c, res.CodeBlackListEnv, "变量已被管理员禁止提交")
+	case res.CodeCustomError:
+		// JS执行发生错误, 系统错误
+		res.ResErrorWithMsg(c, res.CodeCustomError, "发生错误，请联系管理员解决")
+	case res.CodeNoAdmittance:
+		// 数据禁止通过
+		res.ResErrorWithMsg(c, res.CodeNoAdmittance, msg)
 	case res.CodeSuccess:
 		// 上传成功
 		go sqlite.InsertSubmitRecord(c.ClientIP())

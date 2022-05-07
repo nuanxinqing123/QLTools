@@ -41,6 +41,9 @@ const (
 	CodeNoDuplicateSubmission
 	CodeBlackListEnv
 	CodeNumberDepletion
+	CodeRemoveFail
+	CodeCustomError
+	CodeNoAdmittance
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -76,6 +79,9 @@ var codeMsgMap = map[ResCode]string{
 	CodeNoDuplicateSubmission: "禁止提交重复数据",
 	CodeBlackListEnv:          "存在于黑名单的变量",
 	CodeNumberDepletion:       "次数耗尽",
+	CodeRemoveFail:            "删除失败",
+	CodeCustomError:           "自定义错误",
+	CodeNoAdmittance:          "数据禁止通过",
 }
 
 func (c ResCode) Msg() string {

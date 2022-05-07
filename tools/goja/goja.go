@@ -34,22 +34,21 @@ var Transport *http.Transport
 
 type jsonData struct {
 	Bool bool   `json:"bool"`
-	Mode int    `json:"mode"`
 	Env  string `json:"env"`
 }
 
 // RunJS 执行javascript代码
-func RunJS(filename, env string) (bool, int, string, error) {
+func RunJS(filename, env string) (bool, string, error) {
 	// 获取运行的绝对路径
 	ExecPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		zap.L().Error(err.Error())
-		return false, 0, "", err
+		return false, "", err
 	}
 
 	if !strings.Contains(filename, ".js") {
 		// 不是JS文件
-		return false, 0, "", errors.New("传入值不是JS文件名")
+		return false, "", errors.New("传入值不是JS文件名")
 	}
 
 	// JS文件完整路径
@@ -58,7 +57,7 @@ func RunJS(filename, env string) (bool, int, string, error) {
 	data, err := os.ReadFile(JSFilePath)
 	if err != nil {
 		zap.L().Error(err.Error())
-		return false, 0, "", err
+		return false, "", err
 	}
 	template := string(data)
 
@@ -72,21 +71,21 @@ func RunJS(filename, env string) (bool, int, string, error) {
 	if err != nil {
 		// JS代码有问题
 		zap.L().Error(err.Error())
-		return false, 0, "", err
+		return false, "", err
 	}
 	var mainJs func(string) interface{}
 	err = vm.ExportTo(vm.Get("main"), &mainJs)
 	if err != nil {
 		// JS函数映射到 Go函数失败
 		zap.L().Error(err.Error())
-		return false, 0, "", err
+		return false, "", err
 	}
 
 	var j jsonData
 	jd := mainJs(env)
 	marshal, err := json.Marshal(jd)
 	if err != nil {
-		return false, 0, "", err
+		return false, "", err
 	}
 	json.Unmarshal(marshal, &j)
 
@@ -95,10 +94,9 @@ func RunJS(filename, env string) (bool, int, string, error) {
 	} else {
 		zap.L().Debug("false")
 	}
-	zap.L().Debug(strconv.Itoa(j.Mode))
 	zap.L().Debug(j.Env)
 
-	return j.Bool, j.Mode, j.Env, nil
+	return j.Bool, j.Env, nil
 }
 
 // request HTTP请求方法

@@ -11,30 +11,39 @@ import "gorm.io/gorm"
 // EnvName 变量名
 type EnvName struct {
 	gorm.Model
-	Name     string `binding:"required"` // 环境变量名称
-	Quantity int    `binding:"required"` // 环境变量数量上限
-	Regex    string // 环境变量匹配正则
-	Mode     int    `binding:"required"` // 环境变量模式[1：新建模式、2：合并模式]
-	Division string // 环境变量分隔符（合并模式）
+	Name       string `binding:"required"` // 环境变量名称
+	Quantity   int    `binding:"required"` // 环境变量数量上限
+	Regex      string // 环境变量匹配正则
+	Mode       int    `binding:"required"` // 环境变量模式[1：新建模式、2：合并模式、3、更新模式]
+	Division   string // 环境变量分隔符（合并模式）
+	ReUpdate   string // 环境变量更新匹配正则（更新模式）
+	IsPlugin   bool   // 环境变量是否使用插件
+	PluginName string // 绑定的插件名称
 }
 
 // EnvNameAdd 新增变量名
 type EnvNameAdd struct {
-	EnvName     string `json:"envName" binding:"required"`
-	EnvQuantity int    `json:"envQuantity" binding:"required"`
-	EnvRegex    string `json:"envRegex"`
-	EnvMode     int    `json:"envMode" binding:"required"`
-	EnvDivision string `json:"envDivision"`
+	EnvName       string `json:"envName" binding:"required"`
+	EnvQuantity   int    `json:"envQuantity" binding:"required"`
+	EnvRegex      string `json:"envRegex"`
+	EnvMode       int    `json:"envMode" binding:"required"`
+	EnvDivision   string `json:"envDivision"`
+	EnvReUpdate   string `json:"envReUpdate"`
+	EnvIsPlugin   bool   `json:"envIsPlugin"`
+	EnvPluginName string `json:"envPluginName"`
 }
 
 // EnvNameUp 修改变量名
 type EnvNameUp struct {
-	EnvID       int    `json:"envID" binding:"required"`
-	EnvName     string `json:"envName" binding:"required"`
-	EnvQuantity int    `json:"envQuantity" binding:"required"`
-	EnvRegex    string `json:"envRegex"`
-	EnvMode     int    `json:"envMode" binding:"required"`
-	EnvDivision string `json:"envDivision"`
+	EnvID         int    `json:"envID" binding:"required"`
+	EnvName       string `json:"envName" binding:"required"`
+	EnvQuantity   int    `json:"envQuantity" binding:"required"`
+	EnvRegex      string `json:"envRegex"`
+	EnvMode       int    `json:"envMode" binding:"required"`
+	EnvDivision   string `json:"envDivision"`
+	EnvReUpdate   string `json:"envReUpdate"`
+	EnvIsPlugin   bool   `json:"envIsPlugin"`
+	EnvPluginName string `json:"envPluginName"`
 }
 
 // EnvNameDel 删除变量名

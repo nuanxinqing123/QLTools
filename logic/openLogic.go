@@ -9,6 +9,7 @@ package logic
 import (
 	"QLPanelTools/model"
 	"QLPanelTools/sqlite"
+	"QLPanelTools/tools/goja"
 	"QLPanelTools/tools/panel"
 	"QLPanelTools/tools/requests"
 	res "QLPanelTools/tools/response"
@@ -92,12 +93,15 @@ func EnvData() (res.ResCode, model.EnvStartServer) {
 }
 
 // EnvAdd 添加变量
-func EnvAdd(p *model.EnvAdd) res.ResCode {
+func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 	var err error
+	var s2 string
+
+	s2 = p.EnvData
 
 	// 不允许内容为空
 	if p.EnvData == "" {
-		return res.CodeDataIsNull
+		return res.CodeDataIsNull, ""
 	}
 
 	var token model.ResAdd
@@ -105,14 +109,14 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 	result, sData := sqlite.CheckServerDoesItExist(p.ServerID)
 	if result != true {
 		// 服务器不存在
-		return res.CodeErrorOccurredInTheRequest
+		return res.CodeErrorOccurredInTheRequest, ""
 	}
 
 	// 校验变量名是否存在
 	result, eData := sqlite.CheckEnvNameDoesItExist(p.EnvName)
 	if result != true {
 		// 变量不存在
-		return res.CodeErrorOccurredInTheRequest
+		return res.CodeErrorOccurredInTheRequest, ""
 	}
 
 	// 转换切片
@@ -125,7 +129,7 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 		}
 	}
 	if num == 0 {
-		return res.CodeErrorOccurredInTheRequest
+		return res.CodeErrorOccurredInTheRequest, ""
 	}
 
 	// 正则处理(检查是否符合规则)
@@ -138,10 +142,11 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 		if reg != nil {
 			s = reg.FindAllStringSubmatch(p.EnvData, -1)
 			if len(s) == 0 {
-				return res.CodeEnvDataMismatch
+				return res.CodeEnvDataMismatch, ""
 			}
+			s2 = s[0][0]
 		} else {
-			return res.CodeServerBusy
+			return res.CodeServerBusy, ""
 		}
 	}
 
@@ -149,7 +154,7 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 	list, err := sqlite.GetSetting("blacklist")
 	if err != nil {
 		zap.L().Error(err.Error())
-		return res.CodeServerBusy
+		return res.CodeServerBusy, ""
 	}
 	if list.Value != "" {
 		// 如果黑名单不为空,正则匹配是否属于黑名单
@@ -158,7 +163,7 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 			reg := regexp.MustCompile(breakList[i])
 			s = reg.FindAllStringSubmatch(p.EnvData, -1)
 			if len(s) != 0 {
-				return res.CodeBlackListEnv
+				return res.CodeBlackListEnv, ""
 			}
 		}
 	}
@@ -167,92 +172,112 @@ func EnvAdd(p *model.EnvAdd) res.ResCode {
 	c, t, code := CalculateQuantity(p.ServerID, eData.Mode, p.EnvName, eData.Division)
 	if code == res.CodeServerBusy {
 		zap.L().Debug("处理正则失败")
-		return res.CodeServerBusy
+		return res.CodeServerBusy, ""
 	} else if c <= 0 {
 		zap.L().Debug("限额已满，禁止提交")
-		return res.CodeLocationFull
+		return res.CodeLocationFull, ""
 	}
 
 	// 检查重复提交
 	var bol bool
 	var QCount int
-	if eData.Regex != "" {
-		bol, QCount = CheckRepeat(t, s[0][0], p.EnvName, eData)
-	} else {
-		bol, QCount = CheckRepeat(t, p.EnvData, p.EnvName, eData)
-	}
+
+	bol, QCount = CheckRepeat(t, s2, p.EnvName, eData)
 	if bol == true {
-		return res.CodeNoDuplicateSubmission
+		return res.CodeNoDuplicateSubmission, ""
+	}
+
+	// 是否启用插件
+	if eData.IsPlugin != false {
+		// 启用插件, 传入插件名称和变量
+		js, s2, err := goja.RunJS(eData.PluginName, s2)
+		if err != nil {
+			return res.CodeCustomError, s2
+		}
+		if js != true {
+			return res.CodeNoAdmittance, s2
+		}
 	}
 
 	// 提交到服务器
 	var data string
 	url := panel.StringHTTP(sData.URL) + "/open/envs?t=" + strconv.Itoa(sData.Params)
 	zap.L().Debug(url)
-	if eData.Regex != "" {
-		// 指定上传数据
-		if eData.Mode == 1 {
-			// 新建模式
-			data = `[{"value": "` + s[0][0] + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
+
+	// 指定上传数据
+	if eData.Mode == 1 {
+		// 新建模式
+		data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
+	} else if eData.Mode == 2 {
+		// 合并模式
+		if QCount != -1 {
+			vv := t.Data[QCount].Value + eData.Division + s2
+			p.EnvRemarks = t.Data[QCount].Name
+			data = `{"id": "` + strconv.Itoa(t.Data[QCount].ID) + `", "value": "` + vv + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 		} else {
-			// 合并模式
-			if QCount != -1 {
-				vv := t.Data[QCount].Value + eData.Division + s[0][0]
-				p.EnvRemarks = t.Data[QCount].Name
-				data = `{"id": "` + strconv.Itoa(t.Data[QCount].ID) + `", "value": "` + vv + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
-			} else {
-				data = `[{"value": "` + s[0][0] + `","name": "` + p.EnvName + `"}]`
-			}
+			data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `"}]`
 		}
 	} else {
-		// 指定上传数据
-		if eData.Mode == 1 {
-			// 新建模式
-			data = `[{"value": "` + p.EnvData + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
+		// 更新模式
+		reg := regexp.MustCompile(eData.ReUpdate)
+		s = reg.FindAllStringSubmatch(s2, -1)
+		if len(s) == 0 {
+			// 匹配失败, 新建变量
+			QCount = -1
+			data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
 		} else {
-			// 合并模式
-			if QCount != -1 {
-				vv := t.Data[QCount].Value + eData.Division + p.EnvData
-				p.EnvRemarks = t.Data[QCount].Name
-				data = `{"id": "` + strconv.Itoa(t.Data[QCount].ID) + `", "value": "` + vv + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
-			} else {
-				data = `[{"value": "` + p.EnvData + `","name": "` + p.EnvName + `"}]`
+			// 匹配成功, 从青龙面板匹配变量
+			key := s[0][0]
+			for i := 0; i < len(t.Data); i++ {
+				e := reg.FindAllStringSubmatch(t.Data[i].Value, -1)
+				if e[0][0] == key {
+					data = `{"id": "` + strconv.Itoa(t.Data[i].ID) + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+				}
 			}
 		}
 	}
+
 	zap.L().Debug(data)
 	var r []byte
 	if eData.Mode == 1 {
 		// 新建模式(POST)
 		r, err = requests.Requests("POST", url, data, sData.Token)
-	} else {
+	} else if eData.Mode == 2 {
 		// 合并模式(PUT)
-		zap.L().Debug(strconv.Itoa(QCount))
 		if QCount != -1 {
 			r, err = requests.Requests("PUT", url, data, sData.Token)
 		} else {
-			// 面板不存在合并模式变量时
+			// 面板不存在合并模式变量时(POST)
+			r, err = requests.Requests("POST", url, data, sData.Token)
+		}
+	} else {
+		// 更新模式(PUT)
+		if QCount != -1 {
+			r, err = requests.Requests("PUT", url, data, sData.Token)
+		} else {
+			// 面板不存在变量时新建(POST)
 			r, err = requests.Requests("POST", url, data, sData.Token)
 		}
 	}
+
 	if err != nil {
-		return res.CodeServerBusy
+		return res.CodeServerBusy, ""
 	}
 
 	// 序列化内容
 	err = json.Unmarshal(r, &token)
 	if err != nil {
 		zap.L().Error(err.Error())
-		return res.CodeServerBusy
+		return res.CodeServerBusy, ""
 	}
 
 	if token.Code != 200 {
 		// 尝试更新Token
 		go panel.GetPanelToken(sData.URL, sData.ClientID, sData.ClientSecret)
-		return res.CodeStorageFailed
+		return res.CodeStorageFailed, ""
 	}
 
-	return res.CodeSuccess
+	return res.CodeSuccess, ""
 }
 
 // CalculateQuantity 计算变量剩余位置
@@ -279,7 +304,7 @@ func CalculateQuantity(id, mode int, name string, division string) (int, model.E
 
 	// 计算变量剩余限额
 	c := count
-	if mode == 1 {
+	if mode == 1 || mode == 3 {
 		// 新建模式
 		for i := 0; i < len(token.Data); i++ {
 			if token.Data[i].Name == name {
