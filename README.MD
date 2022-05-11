@@ -61,7 +61,7 @@ chmod 755 程序名称
 mkdir qltools && cd qltools
 
 # Docker版本提供架构：amd64、arm64、arm-7
-docker run -itd --name QLTools -v $PWD/config:/QLTools/config -p 15000:15000 nuanxinqing123/qltools:1.0
+docker run -itd --name QLTools -v $PWD/config:/QLTools/config -v $PWD/plugin:/QLTools/plugin -p 15000:15000 nuanxinqing123/qltools:latest
 
 # 更新步骤：因为当前版本不支持热更新，所以需要暂停并删除容器，重新拉取新版本镜像后在qltools目录里面重新启动
 ```
