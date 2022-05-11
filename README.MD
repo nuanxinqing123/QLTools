@@ -77,13 +77,9 @@ TG：[https://t.me/Nuanxinqing](https://t.me/Nuanxinqing)
 Email：nuanxinqing@gmail.com
 
 ## 🧩当前版本日志
-- 修复 前端公告接口存在越权危险
-- 修改 前端：select样式
-- 新增 变量黑名单（阻挡不愿意让提交的变量）
-- 新增 网站自定义背景图
-- 新增 IP提交次数限制
-- 新增 插件模式
-- 新增 前端：后台新增版本号显示
+- 修复 前端：Select选项切换数据错误
+- 修复 前端：Select显示数据错误
+- 修复 前端：切换服务器数据并未切换错误
 
 ## 📔自行构建步骤
 ```shell
@@ -103,15 +99,19 @@ go build
 
 ## 📷演示图
 
-![1.png](https://pic.6b7.xyz/2022/04/22/b100b8eaffafc.png)
+![QQ截图20220511154438.png](https://pic.6b7.xyz/2022/05/11/25a5e41170f5f.png)
 
-![2.png](https://pic.6b7.xyz/2022/04/22/ba035ba2c99e3.png)
+![QQ截图20220511154454.png](https://pic.6b7.xyz/2022/05/11/3f13f15d25b46.png)
 
-![3.png](https://pic.6b7.xyz/2022/04/22/411faac7d8f55.png)
+![QQ截图20220511154818.png](https://pic.6b7.xyz/2022/05/11/e41ea41542307.png)
 
-![4.png](https://pic.6b7.xyz/2022/04/22/e0e76237e9aa7.png)
+![QQ截图20220511154933.png](https://pic.6b7.xyz/2022/05/11/40f36ef85f79d.png)
 
-![5.png](https://pic.6b7.xyz/2022/04/22/4473e0a153112.png)
+![QQ截图20220511154947.png](https://pic.6b7.xyz/2022/05/11/347a5fd9b12f2.png)
+
+![QQ截图20220511155004.png](https://pic.6b7.xyz/2022/05/11/3c3c339fa3b82.png)
+
+![QQ截图20220511155021.png](https://pic.6b7.xyz/2022/05/11/4fe5dab516d93.png)
 
 
 
