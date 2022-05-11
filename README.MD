@@ -80,6 +80,7 @@ Email：nuanxinqing@gmail.com
 - 修复 前端：Select选项切换数据错误
 - 修复 前端：Select显示数据错误
 - 修复 前端：切换服务器数据并未切换错误
+- 修复 前端：没有插件时产生的报错
 
 ## 📔自行构建步骤
 ```shell
