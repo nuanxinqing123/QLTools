@@ -100,7 +100,7 @@ func JavascriptReadall(c *gin.Context) {
 		return
 	}
 
-	// 删除文件
+	// 完整文件
 	PluginPath := ExecPath + "/plugin/"
 
 	// 读取目录

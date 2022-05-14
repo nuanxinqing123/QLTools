@@ -231,17 +231,20 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 			co := 0
 			for i := 0; i < len(t.Data); i++ {
 				e := reg.FindAllStringSubmatch(t.Data[i].Value, -1)
-				if len(e) != 0 {
-					if e[0][0] == key {
-						QCount = 100
-						data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+				if t.Data[i].Name == p.EnvName {
+					if len(e) != 0 {
+						if e[0][0] == key {
+							QCount = 100
+							data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+							co = 0
+							break
+						} else {
+							co++
+						}
 					}
-				} else {
-					co++
-					continue
 				}
 			}
-			if co == len(t.Data) {
+			if co != 0 {
 				data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
 				QCount = -1
 			}
