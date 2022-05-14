@@ -11,7 +11,7 @@ WORKDIR /usr/src/QLTools
 
 # 安装项目必要环境
 RUN \
-  sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
+  #sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
   apk add --no-cache --update go go-bindata g++ ca-certificates tzdata
 
 COPY ./go.mod ./
