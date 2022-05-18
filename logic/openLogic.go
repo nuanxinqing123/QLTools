@@ -207,9 +207,11 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 	// 指定上传数据
 	if eData.Mode == 1 {
 		// 新建模式
+		zap.L().Debug("上传变量：新建模式")
 		data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
 	} else if eData.Mode == 2 {
 		// 合并模式
+		zap.L().Debug("上传变量：合并模式")
 		if QCount != -1 {
 			vv := t.Data[QCount].Value + eData.Division + s2
 			p.EnvRemarks = t.Data[QCount].Name
@@ -219,36 +221,76 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		}
 	} else {
 		// 更新模式
+		zap.L().Debug("上传变量：更新模式")
+		/*
+			1、获取传入变量的正则
+			2、循环匹配正则
+			3、匹配成功：更新、匹配失败：新建
+		*/
 		reg := regexp.MustCompile(eData.ReUpdate)
-		s = reg.FindAllStringSubmatch(s2, -1)
-		if len(s) == 0 {
-			// 匹配失败, 新建变量
-			QCount = -1
-			data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
-		} else {
-			// 匹配成功, 从青龙面板匹配变量
-			key := s[0][0]
-			co := 0
-			for i := 0; i < len(t.Data); i++ {
-				e := reg.FindAllStringSubmatch(t.Data[i].Value, -1)
-				if t.Data[i].Name == p.EnvName {
-					if len(e) != 0 {
-						if e[0][0] == key {
-							QCount = 100
-							data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
-							co = 0
-							break
-						} else {
-							co++
-						}
+		s3 := reg.FindAllStringSubmatch(s2, -1)
+		co := 0
+		for i := 0; i < len(t.Data); i++ {
+			// 循环匹配正则, 判断面板变量名和传入变量名是否一致
+			if t.Data[i].Name == p.EnvName {
+				// 一致, 获取变量正则部分
+				envData := reg.FindAllStringSubmatch(t.Data[i].Value, -1)
+				// 判断匹配结果是否为空
+				if len(envData) != 0 {
+					// 判断两个正则值是否一致
+					zap.L().Debug("-----更新模式：匹配变量-----")
+					zap.L().Debug(envData[0][0])
+					zap.L().Debug(s3[0][0])
+					if envData[0][0] == s3[0][0] {
+						// 一致，更新变量
+						QCount = 100
+						co = 0
+						data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+						break
+					} else {
+						// 不一致，新建变量
+						co++
 					}
 				}
-			}
-			if co != 0 {
-				data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
-				QCount = -1
+			} else {
+				// 面板没存在此变量
+				co++
 			}
 		}
+
+		if co != 0 {
+			data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
+			QCount = -1
+		}
+
+		//if len(s) == 0 {
+		//	// 匹配失败, 新建变量
+		//	QCount = -1
+		//	data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
+		//} else {
+		//	// 匹配成功, 从青龙面板匹配变量
+		//	key := s[0][0]
+		//	co := 0
+		//	for i := 0; i < len(t.Data); i++ {
+		//		e := reg.FindAllStringSubmatch(t.Data[i].Value, -1)
+		//		if t.Data[i].Name == p.EnvName {
+		//			if len(e) != 0 {
+		//				if e[0][0] == key {
+		//					QCount = 100
+		//					data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+		//					co = 0
+		//					break
+		//				} else {
+		//					co++
+		//				}
+		//			}
+		//		}
+		//	}
+		//	if co != 0 {
+		//		data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
+		//		QCount = -1
+		//	}
+		//}
 	}
 
 	zap.L().Debug(data)
