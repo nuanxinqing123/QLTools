@@ -29,8 +29,6 @@ func Setup() *gin.Engine {
 		if viper.GetString("app.mode") == "" {
 			r.Use(logger.GinLogger(), logger.GinRecovery(true))
 		}
-		// 限流熔断
-		r.Use(middleware.RateLimitMiddleware(time.Minute, 500, 500)) // 每分钟限制500次请求, 超出熔断
 	}
 
 	// 前端静态文件
@@ -131,6 +129,13 @@ func Setup() *gin.Engine {
 			ad.POST("javascript/delete", controllers.JavascriptDelete)
 			// 插件：读取plugin目录下所有插件
 			ad.GET("javascript/readall", controllers.JavascriptReadall)
+
+			// 消息推送: 获取信息
+			ad.GET("message/data", controllers.GetEmailData)
+			// 消息推送: 测速发送
+			ad.POST("message/send/test", controllers.SendTestEmail)
+			// 消息推送: 修改
+			ad.POST("message/update", controllers.UpdateEmailSet)
 
 			// 设置：获取全部配置
 			ad.GET("set/settings", controllers.GetSettings)

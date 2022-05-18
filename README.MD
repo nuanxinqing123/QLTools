@@ -74,8 +74,10 @@ TG：[https://t.me/Nuanxinqing](https://t.me/Nuanxinqing)
 Email：nuanxinqing@gmail.com
 
 ## 🧩当前版本日志
-- 修复 更新模式逻辑错误（重要更新，推荐更新）
-- 修改 前端：后台描述提示更新
+- 修复 更新模式逻辑错误
+- 新增 面板启停状态选择
+- 新增 变量名称备注功能
+- 新增 消息推送（推送敏感操作记录）
 
 ## 📔自行构建步骤
 ```shell
