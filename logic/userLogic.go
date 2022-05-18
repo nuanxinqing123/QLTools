@@ -147,6 +147,41 @@ func AddIPAddr(ip string, ifok bool) {
 	}
 	// 储存记录
 	sqlite.InsertLoginRecord(ipCreate)
+	go CheckSafeMsg(ip)
+}
+
+// CheckSafeMsg 检查是否触发安全推送
+func CheckSafeMsg(ip string) {
+	// 获取邮件服务器信息
+	es := sqlite.GetEmailOne()
+
+	// 检查是否开启消息推送
+	if es.SendMail == "" && es.SendPwd == "" && es.SMTPServer == "" || es.EnableEmail == false {
+		// 未开启
+		return
+	} else {
+		// 近十条IP登录数据
+		IPTenData := sqlite.GetIPData()
+		count := 0
+		// 查询此IP登录失败次数
+		for i := 0; i < len(IPTenData); i++ {
+			if IPTenData[i].IP == ip {
+				if IPTenData[i].IfOK == false {
+					count++
+				}
+			}
+		}
+		// 触发安全推送
+		if count >= 2 {
+			zap.L().Debug("触发安全推送")
+			_, info := sqlite.GetUserData()
+			mailTo := []string{info.Email}
+			_ = email.SendMail(
+				mailTo,
+				"青龙Tools - 安全推送",
+				"IP地址："+ip+"，多次失败登录。疑似密码爆破，请管理员尽快处理")
+		}
+	}
 }
 
 // GetIPInfo 查询近十条记录
