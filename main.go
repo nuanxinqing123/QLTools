@@ -110,7 +110,7 @@ func main() {
 	fmt.Println(" ")
 	zap.L().Info("服务监听端口:" + strconv.Itoa(viper.GetInt("app.port")))
 
-	// 优雅关机
+	// 启动
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Listten: %s\n", err)

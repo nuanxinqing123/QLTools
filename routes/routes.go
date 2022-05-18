@@ -144,6 +144,8 @@ func Setup() *gin.Engine {
 
 			// 系统：检查版本
 			ad.GET("check/version", controllers.CheckVersion)
+			// 系统：更新程序
+			ad.POST("check/update/software", controllers.UpdateSoftware)
 		}
 	}
 

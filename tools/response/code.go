@@ -44,6 +44,7 @@ const (
 	CodeRemoveFail
 	CodeCustomError
 	CodeNoAdmittance
+	CodeUpdateServerBusy
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -82,6 +83,7 @@ var codeMsgMap = map[ResCode]string{
 	CodeRemoveFail:            "删除失败",
 	CodeCustomError:           "自定义错误",
 	CodeNoAdmittance:          "数据禁止通过",
+	CodeUpdateServerBusy:      "升级错误",
 }
 
 func (c ResCode) Msg() string {

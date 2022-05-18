@@ -58,6 +58,7 @@ func InitWebSettings() {
 			{Key: "blacklist", Value: ""},
 			{Key: "backgroundImage", Value: ""},
 			{Key: "ipCount", Value: "0"},
+			{Key: "ghProxy", Value: "https://ghproxy.com"},
 		}
 
 		err = SaveSettings(p)

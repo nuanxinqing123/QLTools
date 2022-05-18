@@ -23,3 +23,15 @@ func CheckVersion(c *gin.Context) {
 		res.ResSuccess(c, v)
 	}
 }
+
+// UpdateSoftware 更新软件
+func UpdateSoftware(c *gin.Context) {
+	resCode, _ := logic.UpdateSoftware()
+	switch resCode {
+	case res.CodeServerBusy:
+		res.ResError(c, res.CodeServerBusy)
+	case res.CodeSuccess:
+		// 获取成功
+		res.ResSuccess(c, res.CodeSuccess)
+	}
+}
