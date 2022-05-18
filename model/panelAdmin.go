@@ -15,6 +15,7 @@ type QLPanel struct {
 	URL          string `binding:"required"` // 面板连接地址
 	ClientID     string `binding:"required"` // 面板Client_ID
 	ClientSecret string `binding:"required"` // 面板Client_Secret
+	Enable       bool   `binding:"required"` // 是否启用面板
 	Token        string // 面板Token
 	Params       int    // 面板Params
 	EnvBinding   string // 绑定变量
@@ -27,6 +28,7 @@ type PanelAll struct {
 	URL          string `json:"url"`
 	ClientID     string `json:"id"`
 	ClientSecret string `json:"secret"`
+	Enable       bool   `json:"enablePanel"` // 是否启用面板
 	EnvBinding   string `json:"envBinding"`
 }
 
@@ -36,6 +38,7 @@ type PanelData struct {
 	URL    string `json:"url" binding:"required"`    // 面板连接地址
 	ID     string `json:"id" binding:"required"`     // 面板Client_ID
 	Secret string `json:"secret" binding:"required"` // 面板Client_Secret
+	Enable bool   `json:"enablePanel"`               // 是否启用面板
 }
 
 // UpPanelData 更新面板数据
@@ -45,6 +48,7 @@ type UpPanelData struct {
 	URL    string `json:"url" binding:"required"`    // 面板连接地址
 	ID     string `json:"id" binding:"required"`     // 面板Client_ID
 	Secret string `json:"secret" binding:"required"` // 面板Client_Secret
+	Enable bool   `json:"enablePanel"`               // 是否启用面板
 }
 
 // DelPanelData 删除面板数据

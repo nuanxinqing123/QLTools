@@ -11,6 +11,7 @@ import (
 	"QLPanelTools/model"
 	res "QLPanelTools/tools/response"
 	val "QLPanelTools/tools/validator"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
@@ -52,6 +53,7 @@ func PanelUp(c *gin.Context) {
 	// 获取参数
 	p := new(model.UpPanelData)
 	if err := c.ShouldBindJSON(&p); err != nil {
+		fmt.Println(p)
 		// 参数校验
 		zap.L().Error("SignInHandle with invalid param", zap.Error(err))
 

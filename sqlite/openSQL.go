@@ -13,7 +13,7 @@ import (
 // GetServerCount 获取可用服务器和ID值
 func GetServerCount() []model.QLPanel {
 	var s []model.QLPanel
-	DB.Find(&s)
+	DB.Where("enable = ?", true).Find(&s)
 	return s
 }
 

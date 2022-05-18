@@ -25,6 +25,7 @@ func InsertPanelData(data *model.PanelData) (err error) {
 	dData.URL = data.URL
 	dData.ClientID = data.ID
 	dData.ClientSecret = data.Secret
+	dData.Enable = data.Enable
 	err = DB.Create(&dData).Error
 	if err != nil {
 		zap.L().Error("Insert data error, err:", zap.Error(err))
@@ -42,6 +43,7 @@ func UpdatePanelData(data *model.UpPanelData) {
 	d.URL = data.URL
 	d.ClientID = data.ID
 	d.ClientSecret = data.Secret
+	d.Enable = data.Enable
 	DB.Save(&d)
 }
 
@@ -55,7 +57,7 @@ func DelPanelData(data *model.DelPanelData) {
 // GetPanelAllData 获取面板All信息
 func GetPanelAllData() []model.PanelAll {
 	var p []model.PanelAll
-	sqlStr := "SELECT `id`, `panel_name`, `url`, `client_id`, `client_secret`, `env_binding` FROM `ql_panels` where `deleted_at` IS NULL;"
+	sqlStr := "SELECT `id`, `panel_name`, `url`, `client_id`, `client_secret`, `env_binding`, `enable` FROM `ql_panels` where `deleted_at` IS NULL;"
 	DB.Raw(sqlStr).Scan(&p)
 	return p
 }
