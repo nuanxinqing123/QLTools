@@ -32,6 +32,7 @@ func CheckEnvName(name string) bool {
 func AddEnvName(data *model.EnvNameAdd) (err error) {
 	var e model.EnvName
 	e.Name = data.EnvName
+	e.NameRemarks = data.EnvNameRemarks
 	e.Quantity = data.EnvQuantity
 	e.Regex = data.EnvRegex
 	e.Mode = data.EnvMode
@@ -53,6 +54,7 @@ func UpdateEnvName(data *model.EnvNameUp) {
 	// 通过ID查询并更新数据
 	DB.Where("id = ?", data.EnvID).First(&d)
 	d.Name = data.EnvName
+	d.NameRemarks = data.EnvNameRemarks
 	d.Quantity = data.EnvQuantity
 	d.Regex = data.EnvRegex
 	d.Mode = data.EnvMode
