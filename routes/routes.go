@@ -70,6 +70,7 @@ func Setup() *gin.Engine {
 
 			// 可用服务
 			open.GET("index/data", controllers.IndexData)
+			open.GET("check/update/software", controllers.UpdateSoftware)
 			// 上传变量
 			open.POST("env/add", controllers.EnvADD)
 		}

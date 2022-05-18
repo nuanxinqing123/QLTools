@@ -3,7 +3,9 @@ module QLPanelTools
 go 1.18
 
 require (
+	github.com/beego/beego/v2 v2.0.2
 	github.com/bwmarrin/snowflake v0.3.0
+	github.com/dop251/goja v0.0.0-20220501172647-e1eca0b61fa9
 	github.com/elazarl/go-bindata-assetfs v1.0.1
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/gin-gonic/gin v1.7.7
@@ -15,6 +17,7 @@ require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/spf13/viper v1.10.1
 	go.uber.org/zap v1.21.0
+	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/sqlite v1.3.1
 	gorm.io/gorm v1.23.1
@@ -22,9 +25,7 @@ require (
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
-	github.com/beego/beego/v2 v2.0.2 // indirect
 	github.com/dlclark/regexp2 v1.4.1-0.20201116162257-a2a8dda75c91 // indirect
-	github.com/dop251/goja v0.0.0-20220501172647-e1eca0b61fa9 // indirect
 	github.com/gen2brain/go-unarr v0.1.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
@@ -32,7 +33,6 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
-	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
@@ -57,7 +57,6 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
-	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )
