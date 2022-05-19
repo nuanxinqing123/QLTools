@@ -54,6 +54,7 @@ func Down(url string) (body *http.Response, err error) {
 	// 添加请求数据
 	var ReqData = strings.NewReader("")
 	req, err := http.NewRequest("GET", url, ReqData)
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36")
 	// 发送请求
 	resp, err := client.Do(req)
 	if err != nil {
