@@ -12,7 +12,7 @@ import (
 	"QLPanelTools/tools/requests"
 	res "QLPanelTools/tools/response"
 	"encoding/json"
-	"github.com/inconshreveable/go-update"
+	"github.com/staktrace/go-update"
 	"go.uber.org/zap"
 	"net/http"
 	"runtime"
