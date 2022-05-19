@@ -14,7 +14,6 @@ import (
 	"encoding/json"
 	"github.com/staktrace/go-update"
 	"go.uber.org/zap"
-	"net/http"
 	"runtime"
 )
 
@@ -165,7 +164,7 @@ func UpdateSoftWare(version, GOOS string) {
 }
 
 func doUpdate(url string) error {
-	resp, err := http.Get(url)
+	resp, err := requests.Down(url)
 	if err != nil {
 		return err
 	}

@@ -46,3 +46,20 @@ func Requests(method, url, data, token string) ([]byte, error) {
 	return bodyText, err
 
 }
+
+// Down 下载模块
+func Down(url string) (body *http.Response, err error) {
+	// 创建HTTP实例
+	client := &http.Client{Timeout: 5 * time.Minute}
+	// 添加请求数据
+	var ReqData = strings.NewReader("")
+	req, err := http.NewRequest("GET", url, ReqData)
+	// 发送请求
+	resp, err := client.Do(req)
+	if err != nil {
+		zap.L().Error(err.Error())
+		return body, err
+	}
+
+	return resp, nil
+}
