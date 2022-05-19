@@ -36,7 +36,11 @@ app:
 ```
 
 ## 🔍安装教程
-1、Supervisord & PM2 & nohup 启动守护
+Tips: 
+- 测试版不提供Docker镜像 
+- 删除config目录里面的app.db文件就相当于重装青龙Tools
+
+安装方式一：Supervisord & PM2 & nohup 启动守护
 ```shell
 # 创建目录并进入
 mkdir QLTools && cd QLTools
@@ -52,7 +56,7 @@ chmod 755 程序名称
 
 教程地址：[青龙Tools的后台进程守护教程（附反代域名）](https://6b7.org/460.html)
 
-2、Docker启动
+安装方式二、Docker启动
 ```shell
 # 创建QLTools目录并进入
 mkdir qltools && cd qltools
@@ -78,6 +82,7 @@ Email：nuanxinqing@gmail.com
 - 新增 面板启停状态选择
 - 新增 变量名称备注功能
 - 新增 消息推送（推送敏感操作记录）
+- 新增 程序热更新（仅支持Linux系统，处理器架构：amd64、arm64、arm-7）
 
 ## 📔自行构建步骤
 ```shell

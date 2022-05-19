@@ -41,7 +41,7 @@ func CheckVersion() (model.WebVer, res.ResCode) {
 		w.Update = false
 	}
 	w.Notice = v.Notice
-	w.Version = v.Version
+	w.Version = _const.Version
 
 	return w, res.CodeSuccess
 }
@@ -49,13 +49,17 @@ func CheckVersion() (model.WebVer, res.ResCode) {
 // UpdateSoftware 更新软件
 func UpdateSoftware(p *model.SoftWareGOOS) (res.ResCode, string) {
 	if runtime.GOOS == "windows" {
-		return res.CodeUpdateServerBusy, "Windows系统不支持此命令"
+		return res.CodeUpdateServerBusy, "Windows系统不支持此功能"
 	}
 	// 获取版本号
-	w, _ := CheckVersion()
-	if w.Version == _const.Version {
+	var v model.Ver
+	url := "https://version.6b7.xyz/qltools_version.json"
+	r, _ := requests.Requests("GET", url, "", "")
+	_ = json.Unmarshal(r, &v)
+	if v.Version == _const.Version {
 		return res.CodeUpdateServerBusy, "已经是最新版本"
 	}
+
 	// 更新程序
 	UpdateSoftWare(_const.Version, p.Framework)
 
