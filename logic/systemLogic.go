@@ -99,11 +99,6 @@ func UpdateSoftware() (res.ResCode, string) {
 		if err != nil {
 			zap.L().Error(err.Error())
 		}
-		// 删除旧程序
-		filename := ExecPath + "/" + SWName
-		if err = os.Remove(filename); err != nil {
-			zap.L().Error("删除旧程序失败：" + err.Error())
-		}
 		// 写入压缩包
 		if f, err := os.OpenFile(rarName, syscall.O_CREAT, 0777); err != nil {
 			zap.L().Error("创建程序错误：" + err.Error())
@@ -117,6 +112,13 @@ func UpdateSoftware() (res.ResCode, string) {
 				}
 			}
 		}
+
+		// 删除旧程序
+		filename := ExecPath + "/" + SWName
+		if err = os.Remove(filename); err != nil {
+			zap.L().Error("删除旧程序失败：" + err.Error())
+		}
+
 		// 解压
 		a, err := unarr.NewArchive(rarName)
 		if err != nil {
