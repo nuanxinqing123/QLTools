@@ -9,7 +9,6 @@ package logic
 import (
 	_const "QLPanelTools/const"
 	"QLPanelTools/model"
-	"QLPanelTools/sqlite"
 	"QLPanelTools/tools/requests"
 	res "QLPanelTools/tools/response"
 	"encoding/json"
@@ -47,7 +46,7 @@ func CheckVersion() (model.WebVer, res.ResCode) {
 		w.Update = false
 	}
 	w.Notice = v.Notice
-	w.Version = _const.Version
+	w.Version = v.Version
 
 	return w, res.CodeSuccess
 }
@@ -65,25 +64,27 @@ func UpdateSoftware() (res.ResCode, string) {
 	// 更新程序
 	go func(version, GOOS string) {
 		// 获取代理下载地址
-		gh, _ := sqlite.GetSetting("ghProxy")
+		//gh, _ := sqlite.GetSetting("ghProxy")
 		var url string
 		var rarName string
 		var SWName string
-		url = gh.Value + "https://github.com/nuanxinqing123/QLTools/releases/download/" + version
+		//url = gh.Value + "https://github.com/nuanxinqing123/QLTools/releases/download/" + version
+		//url = "https://github.com/nuanxinqing123/QLTools/releases/download/" + version
+		url = "https://version.6b7.xyz/QLTools-linux-amd64.zip"
 		if GOOS == "amd64" {
 			SWName = "QLTools-linux-amd64"
-			rarName = "QLTools-linux-amd64.rar"
-			url += "/QLTools-linux-amd64.rar"
+			rarName = "QLTools-linux-amd64.zip"
+			url += "/QLTools-linux-amd64.zip"
 		} else if GOOS == "arm64" {
 			SWName = "QLTools-linux-arm64"
-			rarName = "QLTools-linux-arm64.rar"
-			url += "/QLTools-linux-arm64.rar"
+			rarName = "QLTools-linux-arm64.zip"
+			url += "/QLTools-linux-arm64.zip"
 		} else {
 			SWName = "QLTools-linux-arm-7"
-			rarName = "QLTools-linux-arm-7.rar"
-			url += "/QLTools-linux-arm-7.rar"
+			rarName = "QLTools-linux-arm-7.zip"
+			url += "/QLTools-linux-arm-7.zip"
 		}
-		zap.L().Debug(url)
+		zap.L().Debug("Download: " + url)
 
 		// 下载程序
 		req := httplib.Get(url)
@@ -119,7 +120,7 @@ func UpdateSoftware() (res.ResCode, string) {
 		// 解压
 		a, err := unarr.NewArchive(rarName)
 		if err != nil {
-			panic(err)
+			zap.L().Error(err.Error())
 		}
 		defer a.Close()
 		_, err = a.Extract(ExecPath)

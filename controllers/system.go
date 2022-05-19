@@ -26,12 +26,12 @@ func CheckVersion(c *gin.Context) {
 
 // UpdateSoftware 更新软件
 func UpdateSoftware(c *gin.Context) {
-	resCode, _ := logic.UpdateSoftware()
+	resCode, txt := logic.UpdateSoftware()
 	switch resCode {
-	case res.CodeServerBusy:
-		res.ResError(c, res.CodeServerBusy)
+	case res.CodeUpdateServerBusy:
+		res.ResErrorWithMsg(c, res.CodeUpdateServerBusy, txt)
 	case res.CodeSuccess:
 		// 获取成功
-		res.ResSuccess(c, res.CodeSuccess)
+		res.ResSuccess(c, txt)
 	}
 }
