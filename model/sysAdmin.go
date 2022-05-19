@@ -16,3 +16,7 @@ type WebVer struct {
 	Version string `json:"Version"`
 	Notice  string `json:"Notice"`
 }
+
+type SoftWareGOOS struct {
+	Framework string `json:"framework" binding:"required"`
+}
