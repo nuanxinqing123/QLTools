@@ -77,7 +77,7 @@ func UpdateSoftWare(version, GOOS string) {
 	} else if GOOS == "arm64" {
 		url += "/QLTools-linux-arm64"
 	} else {
-		url += "/QLTools-linux-arm-7"
+		url += "/QLTools-linux-arm"
 	}
 	zap.L().Debug("Download: " + url)
 
