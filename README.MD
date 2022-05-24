@@ -65,7 +65,7 @@ mkdir qltools && cd qltools
 # Docker版本提供架构：amd64、arm64、arm-7
 docker run -itd --name QLTools -v $PWD/config:/QLTools/config -v $PWD/plugin:/QLTools/plugin -p 15000:15000 nuanxinqing123/qltools:latest
 
-# 更新步骤：因为当前版本不支持热更新，所以需要暂停并删除容器，重新拉取新版本镜像后在qltools目录里面重新启动
+# 更新步骤：后台点击更新，稍等5分钟左右。手动重启容器即可完成更新（如果更新失败，请删除容器和镜像，然后重新拉取镜像启动）
 ```
 
 ## 🎯开发计划
@@ -79,11 +79,11 @@ TG：[https://t.me/Nuanxinqing](https://t.me/Nuanxinqing)
 Email：nuanxinqing@gmail.com
 
 ## 🧩当前版本日志
-- 修复 更新模式逻辑错误
-- 新增 面板启停状态选择
-- 新增 变量名称备注功能
-- 新增 消息推送（推送敏感操作记录）
-- 新增 程序热更新（仅支持Linux系统，处理器架构：amd64、arm64、arm-7）
+- 修复 变量组超出九个产生的错误（底层修改，更新后需进入后台重新绑定）
+- 修复 更新模式变量备注覆盖逻辑
+- 更新 前端响应时间从默认五秒修改为十秒
+- 更新 前端后台部分功能描述
+- 更新 前端部分模块性能提升
 
 ## 📔自行构建步骤
 ```shell
