@@ -61,7 +61,7 @@ func UpdateSoftware(p *model.SoftWareGOOS) (res.ResCode, string) {
 	}
 
 	// 更新程序
-	UpdateSoftWare(_const.Version, p.Framework)
+	go UpdateSoftWare(v.Version, p.Framework)
 
 	return res.CodeSuccess, "程序已进入自动更新任务，如果更新失败请手动更新"
 }
