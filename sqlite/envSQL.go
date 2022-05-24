@@ -85,7 +85,7 @@ func GetEnvAllByID(id int) []model.EnvName {
 	var s model.QLPanel
 	DB.First(&s, id)
 	// 转换切片
-	envBind := strings.Split(s.EnvBinding, "")
+	envBind := strings.Split(s.EnvBinding, "@")
 	// 切片转换int类型
 	var e []int
 	for i := 0; i < len(envBind); i++ {
