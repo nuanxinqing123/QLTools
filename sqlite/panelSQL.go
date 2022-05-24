@@ -66,7 +66,7 @@ func GetPanelAllData() []model.PanelAll {
 func UpdatePanelEnvData(data *model.PanelEnvData) {
 	var d model.QLPanel
 	// []String 转换 String 储存
-	s := strings.Join(data.EnvBinding, "")
+	s := strings.Join(data.EnvBinding, "@")
 	// 通过ID查询并更新数据
 	DB.Where("id = ? ", data.UID).First(&d)
 	d.EnvBinding = s
