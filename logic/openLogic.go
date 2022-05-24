@@ -245,7 +245,15 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 						// 一致，更新变量
 						QCount = 100
 						co = 0
-						data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+						if t.Data[i].Remarks != "" {
+							if p.EnvRemarks == "" {
+								data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + t.Data[i].Remarks + `"}`
+							} else {
+								data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+							}
+						} else {
+							data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+						}
 						break
 					} else {
 						// 不一致，新建变量
