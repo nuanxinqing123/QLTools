@@ -106,14 +106,14 @@ func main() {
 (____\/_)(_______/)_(   (_______)(_______)(_______|_______)`)
 	fmt.Println(" ")
 	if viper.GetString("app.mode") == "debug" {
-		fmt.Println("当前运行模式：Debug模式")
+		fmt.Println("运行模式：Debug模式")
 	} else {
-		fmt.Println("当前运行模式：Release模式")
+		fmt.Println("运行模式：Release模式")
 	}
-	fmt.Println("当前系统版本：" + _const.Version)
-	fmt.Println("服务监听端口:" + strconv.Itoa(viper.GetInt("app.port")))
+	fmt.Println("系统版本：" + _const.Version)
+	fmt.Println("监听端口:" + strconv.Itoa(viper.GetInt("app.port")))
 	fmt.Println(" ")
-	zap.L().Info("服务监听端口:" + strconv.Itoa(viper.GetInt("app.port")))
+	zap.L().Info("监听端口:" + strconv.Itoa(viper.GetInt("app.port")))
 
 	// 启动
 	go func() {
