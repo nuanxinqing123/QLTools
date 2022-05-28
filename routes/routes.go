@@ -109,6 +109,8 @@ func Setup() *gin.Engine {
 			ad.GET("env/panel/all", controllers.GetAllPanelData)
 			// 面板：绑定变量
 			ad.PUT("env/panel/binding/update", controllers.UpdatePanelEnvData)
+			// 面板：解除所有面板变量绑定
+			ad.PUT("env/panel/unbind/update", controllers.UnbindPanelEnvData)
 
 			// 容器：迁移
 			ad.POST("container/transfer", controllers.Transfer)

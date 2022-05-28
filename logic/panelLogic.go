@@ -40,10 +40,23 @@ func PanelDelete(p *model.DelPanelData) res.ResCode {
 }
 
 // GetAllPanelData 获取面板全部信息
-func GetAllPanelData() ([]model.PanelAll, res.ResCode) {
+func GetAllPanelData() ([]model.QLPanel, res.ResCode) {
 	// 获取信息
 	panel := sqlite.GetPanelAllData()
 	return panel, res.CodeSuccess
+}
+
+// UnbindPanelEnvData 解除所有面板变量绑定
+func UnbindPanelEnvData() res.ResCode {
+	// 获取所有面板信息
+	panel := sqlite.GetPanelAllData()
+	for i := 0; i < len(panel); i++ {
+		panel[i].EnvBinding = ""
+		// 保存数据
+		sqlite.UnbindPanelEnvData(panel[i])
+	}
+
+	return res.CodeSuccess
 }
 
 // UpdatePanelEnvData 修改面板绑定变量

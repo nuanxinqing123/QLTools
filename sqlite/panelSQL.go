@@ -55,21 +55,22 @@ func DelPanelData(data *model.DelPanelData) {
 }
 
 // GetPanelAllData 获取面板All信息
-func GetPanelAllData() []model.PanelAll {
-	var p []model.PanelAll
-	sqlStr := "SELECT `id`, `panel_name`, `url`, `client_id`, `client_secret`, `env_binding`, `enable` FROM `ql_panels` where `deleted_at` IS NULL;"
-	DB.Raw(sqlStr).Scan(&p)
+func GetPanelAllData() []model.QLPanel {
+	var p []model.QLPanel
+	//sqlStr := "SELECT `id`, `panel_name`, `url`, `client_id`, `client_secret`, `env_binding`, `enable` FROM `ql_panels` where `deleted_at` IS NULL;"
+	//DB.Raw(sqlStr).Scan(&p)
+	DB.Find(&p)
 	return p
 }
 
 // UpdatePanelEnvData 更新面板绑定变量
 func UpdatePanelEnvData(data *model.PanelEnvData) {
 	var d model.QLPanel
-	// []String 转换 String 储存
-	s := strings.Join(data.EnvBinding, "@")
 	// 通过ID查询并更新数据
 	DB.Where("id = ? ", data.UID).First(&d)
-	d.EnvBinding = s
+
+	// []String 转换 String 储存
+	d.EnvBinding = strings.Join(data.EnvBinding, "@")
 	DB.Save(&d)
 }
 
@@ -79,4 +80,9 @@ func GetPanelDataByID(id int) model.QLPanel {
 	// 通过ID查询容器
 	DB.Where("id = ? ", id).First(&d)
 	return d
+}
+
+// UnbindPanelEnvData 解绑面板绑定变量
+func UnbindPanelEnvData(p model.QLPanel) {
+	DB.Save(&p)
 }

@@ -144,3 +144,14 @@ func UpdatePanelEnvData(c *gin.Context) {
 		res.ResSuccess(c, "修改成功")
 	}
 }
+
+// UnbindPanelEnvData 解除所有面板变量绑定
+func UnbindPanelEnvData(c *gin.Context) {
+	// 处理业务
+	resCode := logic.UnbindPanelEnvData()
+	switch resCode {
+	case res.CodeSuccess:
+		// 解绑成功
+		res.ResSuccess(c, "解绑成功")
+	}
+}
