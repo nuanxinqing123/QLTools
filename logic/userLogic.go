@@ -140,6 +140,7 @@ func AddIPAddr(ip string, ifok bool) {
 	}
 
 	ipCreate := &model.LoginRecord{
+		LoginDay:  timeTools.SwitchTimeStampToDataYear(time.Now().Unix()),
 		LoginTime: timeTools.SwitchTimeStampToData(time.Now().Unix()),
 		IP:        ip,
 		IPAddress: fmt.Sprintf("%s", addr),
@@ -161,7 +162,7 @@ func CheckSafeMsg(ip string) {
 		return
 	} else {
 		// 近十条IP登录数据
-		IPTenData := sqlite.GetIPData()
+		IPTenData := sqlite.GetFailLoginIPData()
 		count := 0
 		// 查询此IP登录失败次数
 		for i := 0; i < len(IPTenData); i++ {
@@ -172,7 +173,7 @@ func CheckSafeMsg(ip string) {
 			}
 		}
 		// 触发安全推送
-		if count >= 2 {
+		if count >= 3 {
 			zap.L().Debug("触发安全推送")
 			_, info := sqlite.GetUserData()
 			mailTo := []string{info.Email}

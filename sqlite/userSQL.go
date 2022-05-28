@@ -9,6 +9,8 @@ package sqlite
 import (
 	"QLPanelTools/model"
 	res "QLPanelTools/tools/response"
+	"QLPanelTools/tools/timeTools"
+	"time"
 )
 
 // InsertUser 创建新用户
@@ -85,6 +87,14 @@ func InsertLoginRecord(lr *model.LoginRecord) {
 func GetIPData() []model.IpData {
 	var i []model.IpData
 	sqlStr := "SELECT `login_time`, `ip`, `ip_address`, `if_ok` FROM `login_records` order by id desc limit 0,10;"
+	DB.Raw(sqlStr).Scan(&i)
+	return i
+}
+
+// GetFailLoginIPData 获取当日登录IP记录
+func GetFailLoginIPData() []model.IpData {
+	var i []model.IpData
+	sqlStr := "SELECT `login_day`, `login_time`, `ip`, `ip_address`, `if_ok` FROM `login_records` WHERE login_day = '" + timeTools.SwitchTimeStampToDataYear(time.Now().Unix()) + "';"
 	DB.Raw(sqlStr).Scan(&i)
 	return i
 }

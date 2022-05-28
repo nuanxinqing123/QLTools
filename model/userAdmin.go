@@ -29,6 +29,7 @@ type User struct {
 // LoginRecord 登录记录模型
 type LoginRecord struct {
 	gorm.Model
+	LoginDay  string `binding:"required"`
 	LoginTime string `binding:"required"`
 	IP        string `binding:"required"`
 	IPAddress string `binding:"required"`
