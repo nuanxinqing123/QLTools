@@ -9,6 +9,7 @@
 <p><a href="https://github.com/nuanxinqing123/QLTools#%E6%BC%94%E7%A4%BA%E5%9B%BE">查看演示图</a></p>
 
 ## 🍭功能介绍
+- 理论支持青龙全版本
 - 自定义变量名称 & 数量
 - 支持多容器上传管控
 - 容器独享变量限额
@@ -40,7 +41,6 @@ app:
 Tips: 
 - 测试版不提供Docker镜像 
 - 删除config目录里面的app.db文件就相当于重装青龙Tools
-- v1.3版本热更新存在Bug，请手动升级最新版即可修复
 
 安装方式一：Supervisord & PM2 & nohup 启动守护
 ```shell
@@ -66,6 +66,8 @@ mkdir qltools && cd qltools
 # Docker版本提供架构：amd64、arm64、arm-7
 docker run -itd --name QLTools -v $PWD/config:/QLTools/config -v $PWD/plugin:/QLTools/plugin -p 15000:15000 nuanxinqing123/qltools:latest
 
+# Docker部署方式的热更新存在问题，请手动拉镜像更新
+
 # 更新步骤：后台点击更新，稍等5分钟左右。手动重启容器即可完成更新（如果更新失败，请删除容器和镜像，然后重新拉取镜像启动）
 ```
 
@@ -80,13 +82,10 @@ TG：[https://t.me/Nuanxinqing](https://t.me/Nuanxinqing)
 Email：nuanxinqing@gmail.com
 
 ## 🧩当前版本日志
-- 变量组绑定与显示异常的用户，请先使用一键清空功能解绑。然后重新绑定
-- 修复 管理员安全推送逻辑错误
-- 修复 模块错误Bug导致程序崩溃
-- 修改 前端：变量名称描述修改
-- 新增 面板变量绑定一键清空
-- 新增 前端：正则演示表
-- 新增 运行模式状态展示
+- Docker热更新存在问题，请手动拉镜像更新
+- 修复 前端：容器管理面板空白选项
+- 修改 投稿正则表单描述错误
+- 新增 实验性支持青龙2.10.13版本
 
 ## 📔自行构建步骤
 ```shell
