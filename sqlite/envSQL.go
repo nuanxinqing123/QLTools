@@ -88,12 +88,16 @@ func GetEnvAllByID(id int) []model.EnvName {
 	envBind := strings.Split(s.EnvBinding, "@")
 	// 切片转换int类型
 	var e []int
+	zap.L().Debug("面板为：" + s.PanelName)
 	for i := 0; i < len(envBind); i++ {
-		ee, err := strconv.Atoi(envBind[i])
-		if err != nil {
-			zap.L().Error(err.Error())
+		zap.L().Debug("面板绑定变量数据为：" + envBind[i])
+		if envBind[i] != "" {
+			ee, err := strconv.Atoi(envBind[i])
+			if err != nil {
+				zap.L().Error(err.Error())
+			}
+			e = append(e, ee)
 		}
-		e = append(e, ee)
 	}
 
 	var env []model.EnvName

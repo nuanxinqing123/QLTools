@@ -26,6 +26,7 @@ func InsertPanelData(data *model.PanelData) (err error) {
 	dData.ClientID = data.ID
 	dData.ClientSecret = data.Secret
 	dData.Enable = data.Enable
+	dData.PanelVersion = data.PanelVersion
 	err = DB.Create(&dData).Error
 	if err != nil {
 		zap.L().Error("Insert data error, err:", zap.Error(err))
@@ -44,6 +45,7 @@ func UpdatePanelData(data *model.UpPanelData) {
 	d.ClientID = data.ID
 	d.ClientSecret = data.Secret
 	d.Enable = data.Enable
+	d.PanelVersion = data.PanelVersion
 	DB.Save(&d)
 }
 

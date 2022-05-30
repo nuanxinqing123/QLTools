@@ -113,8 +113,8 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 	}
 
 	// 校验变量名是否存在
-	result, eData := sqlite.CheckEnvNameDoesItExist(p.EnvName)
-	if result != true {
+	resultEnv, eData := sqlite.CheckEnvNameDoesItExist(p.EnvName)
+	if resultEnv != true {
 		// 变量不存在
 		return res.CodeErrorOccurredInTheRequest, ""
 	}
@@ -215,7 +215,12 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		if QCount != -1 {
 			vv := t.Data[QCount].Value + eData.Division + s2
 			p.EnvRemarks = t.Data[QCount].Name
-			data = `{"id": "` + strconv.Itoa(t.Data[QCount].ID) + `", "value": "` + vv + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+			if t.Data[QCount].OId != "" {
+				data = `{"_id": "` + t.Data[QCount].OId + `", "value": "` + vv + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+			} else {
+				data = `{"id": "` + strconv.Itoa(t.Data[QCount].ID) + `", "value": "` + vv + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+			}
+			//data = `{"id": "` + strconv.Itoa(t.Data[QCount].ID) + `", "value": "` + vv + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 		} else {
 			data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `"}]`
 		}
@@ -247,12 +252,27 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 						co = 0
 						if t.Data[i].Remarks != "" {
 							if p.EnvRemarks == "" {
-								data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + t.Data[i].Remarks + `"}`
+								if t.Data[i].OId != "" {
+									data = `{"_id": "` + t.Data[i].OId + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+								} else {
+									data = `{"id": "` + strconv.Itoa(t.Data[i].ID) + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+								}
+								//data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + t.Data[i].Remarks + `"}`
 							} else {
-								data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+								if t.Data[i].OId != "" {
+									data = `{"_id": "` + t.Data[i].OId + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+								} else {
+									data = `{"id": "` + strconv.Itoa(t.Data[i].ID) + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+								}
+								//data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 							}
 						} else {
-							data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+							if t.Data[i].OId != "" {
+								data = `{"_id": "` + t.Data[i].OId + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+							} else {
+								data = `{"id": "` + strconv.Itoa(t.Data[i].ID) + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+							}
+							//data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 						}
 						break
 					} else {
@@ -270,35 +290,6 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 			data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
 			QCount = -1
 		}
-
-		//if len(s) == 0 {
-		//	// 匹配失败, 新建变量
-		//	QCount = -1
-		//	data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
-		//} else {
-		//	// 匹配成功, 从青龙面板匹配变量
-		//	key := s[0][0]
-		//	co := 0
-		//	for i := 0; i < len(t.Data); i++ {
-		//		e := reg.FindAllStringSubmatch(t.Data[i].Value, -1)
-		//		if t.Data[i].Name == p.EnvName {
-		//			if len(e) != 0 {
-		//				if e[0][0] == key {
-		//					QCount = 100
-		//					data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
-		//					co = 0
-		//					break
-		//				} else {
-		//					co++
-		//				}
-		//			}
-		//		}
-		//	}
-		//	if co != 0 {
-		//		data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
-		//		QCount = -1
-		//	}
-		//}
 	}
 
 	zap.L().Debug(data)
@@ -335,9 +326,11 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		return res.CodeServerBusy, ""
 	}
 
-	if token.Code != 200 {
+	if token.Code >= 400 && token.Code <= 500 {
 		// 尝试更新Token
 		go panel.GetPanelToken(sData.URL, sData.ClientID, sData.ClientSecret)
+		return res.CodeStorageFailed, ""
+	} else if token.Code >= 500 {
 		return res.CodeStorageFailed, ""
 	}
 

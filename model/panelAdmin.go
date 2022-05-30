@@ -16,6 +16,7 @@ type QLPanel struct {
 	ClientID     string `binding:"required"` // 面板Client_ID
 	ClientSecret string `binding:"required"` // 面板Client_Secret
 	Enable       bool   `binding:"required"` // 是否启用面板
+	PanelVersion bool   `binding:"required"` // 面板版本（0 - 旧版本 / 1 - 新版本）
 	Token        string // 面板Token
 	Params       int    // 面板Params
 	EnvBinding   string // 绑定变量
@@ -28,27 +29,30 @@ type PanelAll struct {
 	URL          string `json:"url"`
 	ClientID     string `json:"id"`
 	ClientSecret string `json:"secret"`
-	Enable       bool   `json:"enablePanel"` // 是否启用面板
+	Enable       bool   `json:"enablePanel"`  // 是否启用面板
+	PanelVersion bool   `json:"panelVersion"` // 面板版本（0 - 新版本 / 1 - 旧版本）
 	EnvBinding   string `json:"envBinding"`
 }
 
 // PanelData 创建面板数据
 type PanelData struct {
-	Name   string `json:"name"`                      // 面板名称
-	URL    string `json:"url" binding:"required"`    // 面板连接地址
-	ID     string `json:"id" binding:"required"`     // 面板Client_ID
-	Secret string `json:"secret" binding:"required"` // 面板Client_Secret
-	Enable bool   `json:"enablePanel"`               // 是否启用面板
+	Name         string `json:"name"`                      // 面板名称
+	URL          string `json:"url" binding:"required"`    // 面板连接地址
+	ID           string `json:"id" binding:"required"`     // 面板Client_ID
+	Secret       string `json:"secret" binding:"required"` // 面板Client_Secret
+	Enable       bool   `json:"enablePanel"`               // 是否启用面板
+	PanelVersion bool   `json:"panelVersion"`              // 面板版本（0 - 新版本 / 1 - 旧版本）
 }
 
 // UpPanelData 更新面板数据
 type UpPanelData struct {
-	UID    int    `json:"uid" binding:"required"`    // 数据库ID值
-	Name   string `json:"name" binding:"required"`   // 面板名称
-	URL    string `json:"url" binding:"required"`    // 面板连接地址
-	ID     string `json:"id" binding:"required"`     // 面板Client_ID
-	Secret string `json:"secret" binding:"required"` // 面板Client_Secret
-	Enable bool   `json:"enablePanel"`               // 是否启用面板
+	UID          int    `json:"uid" binding:"required"`    // 数据库ID值
+	Name         string `json:"name" binding:"required"`   // 面板名称
+	URL          string `json:"url" binding:"required"`    // 面板连接地址
+	ID           string `json:"id" binding:"required"`     // 面板Client_ID
+	Secret       string `json:"secret" binding:"required"` // 面板Client_Secret
+	Enable       bool   `json:"enablePanel"`               // 是否启用面板
+	PanelVersion bool   `json:"panelVersion"`              // 面板版本（0 - 新版本 / 1 - 旧版本）
 }
 
 // DelPanelData 删除面板数据
@@ -98,6 +102,7 @@ type EnvData struct {
 
 type envData struct {
 	ID      int    `json:"id"`
+	OId     string `json:"_id"`
 	Name    string `json:"name"`
 	Value   string `json:"value"`
 	Remarks string `json:"remarks"`
