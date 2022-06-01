@@ -16,10 +16,6 @@ import (
 	"QLPanelTools/tools/validator"
 	"context"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
-	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -29,6 +25,11 @@ import (
 	"strconv"
 	"syscall"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+	"go.uber.org/zap"
+	"gopkg.in/yaml.v3"
 )
 
 func main() {
@@ -111,9 +112,9 @@ func main() {
 		fmt.Println("运行模式：Release模式")
 	}
 	fmt.Println("系统版本：" + _const.Version)
-	fmt.Println("监听端口:" + strconv.Itoa(viper.GetInt("app.port")))
+	fmt.Println("监听端口：" + strconv.Itoa(viper.GetInt("app.port")))
 	fmt.Println(" ")
-	zap.L().Info("监听端口:" + strconv.Itoa(viper.GetInt("app.port")))
+	zap.L().Info("监听端口：" + strconv.Itoa(viper.GetInt("app.port")))
 
 	// 启动
 	go func() {
