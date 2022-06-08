@@ -112,6 +112,9 @@ func main() {
 		fmt.Println("运行模式：Release模式")
 	}
 	fmt.Println("系统版本：" + _const.Version)
+	fmt.Println("登录地址：IP或域名:" + strconv.Itoa(viper.GetInt("app.port")) + "/#/login")
+	fmt.Println("注册地址：IP或域名:" + strconv.Itoa(viper.GetInt("app.port")) + "/#/register")
+	fmt.Println("后台地址：IP或域名:" + strconv.Itoa(viper.GetInt("app.port")) + "/#/admin")
 	fmt.Println("监听端口：" + strconv.Itoa(viper.GetInt("app.port")))
 	fmt.Println(" ")
 	zap.L().Info("监听端口：" + strconv.Itoa(viper.GetInt("app.port")))

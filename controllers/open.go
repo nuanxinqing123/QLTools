@@ -186,7 +186,7 @@ func EnvADD(c *gin.Context) {
 	case res.CodeServerBusy:
 		res.ResErrorWithMsg(c, res.CodeServerBusy, "服务繁忙,请稍后重试")
 	case res.CodeStorageFailed:
-		res.ResErrorWithMsg(c, res.CodeStorageFailed, "发生一点小意外，请重新提交")
+		res.ResErrorWithMsg(c, res.CodeStorageFailed, msg)
 	case res.CodeErrorOccurredInTheRequest:
 		res.ResErrorWithMsg(c, res.CodeErrorOccurredInTheRequest, "提交服务器或变量名不在白名单")
 	case res.CodeEnvDataMismatch:

@@ -88,10 +88,7 @@ type Token struct {
 		TokenType  string `json:"token_type"`
 		Expiration int    `json:"expiration"`
 	} `json:"data"`
-}
-
-type ResAdd struct {
-	Code int `json:"code"`
+	Message string
 }
 
 // EnvData 面板变量数据

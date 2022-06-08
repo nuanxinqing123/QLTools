@@ -104,7 +104,7 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		return res.CodeDataIsNull, ""
 	}
 
-	var token model.ResAdd
+	var token model.Token
 	// 校验服务器ID
 	result, sData := sqlite.CheckServerDoesItExist(p.ServerID)
 	if result != true {
@@ -329,9 +329,9 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 	if token.Code >= 400 && token.Code <= 500 {
 		// 尝试更新Token
 		go panel.GetPanelToken(sData.URL, sData.ClientID, sData.ClientSecret)
-		return res.CodeStorageFailed, ""
+		return res.CodeStorageFailed, "发生一点小意外，请重新提交"
 	} else if token.Code >= 500 {
-		return res.CodeStorageFailed, ""
+		return res.CodeStorageFailed, "提交数据发生【500】错误，错误原因：" + token.Message
 	}
 
 	return res.CodeSuccess, ""

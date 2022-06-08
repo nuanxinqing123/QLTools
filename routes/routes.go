@@ -149,8 +149,6 @@ func Setup() *gin.Engine {
 			// 系统：更新程序
 			ad.POST("check/update/software", controllers.UpdateSoftware)
 		}
-
-		// 用户系统权限组
 	}
 
 	return r
