@@ -201,7 +201,9 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 
 	// 提交到服务器
 	var data string
+	var idDate string
 	url := panel.StringHTTP(sData.URL) + "/open/envs?t=" + strconv.Itoa(sData.Params)
+	idDateUrl := panel.StringHTTP(sData.URL) + "/open/envs/enable?t=" + strconv.Itoa(sData.Params)
 	zap.L().Debug(url)
 
 	// 指定上传数据
@@ -220,7 +222,6 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 			} else {
 				data = `{"id": "` + strconv.Itoa(t.Data[QCount].ID) + `", "value": "` + vv + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 			}
-			//data = `{"id": "` + strconv.Itoa(t.Data[QCount].ID) + `", "value": "` + vv + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 		} else {
 			data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `"}]`
 		}
@@ -253,26 +254,29 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 						if t.Data[i].Remarks != "" {
 							if p.EnvRemarks == "" {
 								if t.Data[i].OId != "" {
+									idDate = t.Data[i].OId
 									data = `{"_id": "` + t.Data[i].OId + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 								} else {
+									idDate = strconv.Itoa(t.Data[i].ID)
 									data = `{"id": "` + strconv.Itoa(t.Data[i].ID) + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 								}
-								//data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + t.Data[i].Remarks + `"}`
 							} else {
 								if t.Data[i].OId != "" {
+									idDate = t.Data[i].OId
 									data = `{"_id": "` + t.Data[i].OId + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 								} else {
+									idDate = strconv.Itoa(t.Data[i].ID)
 									data = `{"id": "` + strconv.Itoa(t.Data[i].ID) + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 								}
-								//data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 							}
 						} else {
 							if t.Data[i].OId != "" {
+								idDate = t.Data[i].OId
 								data = `{"_id": "` + t.Data[i].OId + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 							} else {
+								idDate = strconv.Itoa(t.Data[i].ID)
 								data = `{"id": "` + strconv.Itoa(t.Data[i].ID) + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 							}
-							//data = `{"id": ` + strconv.Itoa(t.Data[i].ID) + `, "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 						}
 						break
 					} else {
@@ -309,6 +313,11 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		// 更新模式(PUT)
 		if QCount != -1 {
 			r, err = requests.Requests("PUT", url, data, sData.Token)
+			// 启用禁用变量
+			EnableID := `[` + idDate + `]`
+			go func() {
+				_, _ = requests.Requests("PUT", idDateUrl, EnableID, sData.Token)
+			}()
 		} else {
 			// 面板不存在变量时新建(POST)
 			r, err = requests.Requests("POST", url, data, sData.Token)
