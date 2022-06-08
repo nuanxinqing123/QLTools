@@ -27,7 +27,7 @@ RUN \
   
 
 # FROM alpine:3.15
-FROM ubuntu:latest
+FROM ubuntu:22.10
 
 MAINTAINER QLTools "nuanxinqing@gmail.com"
 
