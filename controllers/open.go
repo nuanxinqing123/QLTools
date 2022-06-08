@@ -201,7 +201,7 @@ func EnvADD(c *gin.Context) {
 		res.ResErrorWithMsg(c, res.CodeBlackListEnv, "变量已被管理员禁止提交")
 	case res.CodeCustomError:
 		// JS执行发生错误, 系统错误
-		res.ResErrorWithMsg(c, res.CodeCustomError, "发生错误，请联系管理员解决")
+		res.ResErrorWithMsg(c, res.CodeCustomError, "执行插件发生错误，错误原因："+msg)
 	case res.CodeNoAdmittance:
 		// 数据禁止通过
 		res.ResErrorWithMsg(c, res.CodeNoAdmittance, msg)

@@ -192,7 +192,7 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		// 启用插件, 传入插件名称和变量
 		js, s2, err := goja.RunJS(eData.PluginName, s2)
 		if err != nil {
-			return res.CodeCustomError, s2
+			return res.CodeCustomError, err.Error()
 		}
 		if js != true {
 			return res.CodeNoAdmittance, s2
