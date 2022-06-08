@@ -155,3 +155,14 @@ func UnbindPanelEnvData(c *gin.Context) {
 		res.ResSuccess(c, "解绑成功")
 	}
 }
+
+// UpdateAllPanelToken 批量更新面板Token
+func UpdateAllPanelToken(c *gin.Context) {
+	// 处理业务
+	resCode := logic.UpdateAllPanelToken()
+	switch resCode {
+	case res.CodeSuccess:
+		// 更新成功
+		res.ResSuccess(c, "批量更新面板Token成功")
+	}
+}

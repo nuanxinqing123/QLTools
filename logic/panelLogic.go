@@ -9,6 +9,7 @@ package logic
 import (
 	"QLPanelTools/model"
 	"QLPanelTools/sqlite"
+	"QLPanelTools/tools/panel"
 	res "QLPanelTools/tools/response"
 	"go.uber.org/zap"
 )
@@ -62,5 +63,17 @@ func UnbindPanelEnvData() res.ResCode {
 // UpdatePanelEnvData 修改面板绑定变量
 func UpdatePanelEnvData(p *model.PanelEnvData) res.ResCode {
 	sqlite.UpdatePanelEnvData(p)
+	return res.CodeSuccess
+}
+
+// UpdateAllPanelToken 解除所有面板变量绑定
+func UpdateAllPanelToken() res.ResCode {
+	// 获取所有面板信息
+	panelData := sqlite.GetPanelAllData()
+	for i := 0; i < len(panelData); i++ {
+		// 更新Token
+		go panel.GetPanelToken(panelData[i].URL, panelData[i].ClientID, panelData[i].ClientSecret)
+	}
+
 	return res.CodeSuccess
 }
