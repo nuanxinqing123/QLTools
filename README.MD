@@ -64,7 +64,7 @@ chmod 755 程序名称
 mkdir qltools && cd qltools
 
 # Docker版本提供架构：amd64、arm64、arm-7
-docker run -itd --name QLTools -v $PWD/config:/QLTools/config -v $PWD/plugin:/QLTools/plugin -p 15000:15000 nuanxinqing123/qltools:latest
+docker run --restart=always -itd --name QLTools -v $PWD/config:/QLTools/config -v $PWD/plugin:/QLTools/plugin -p 15000:15000 nuanxinqing123/qltools:latest
 
 # Docker部署方式的热更新存在问题，请手动拉镜像更新
 
@@ -82,10 +82,18 @@ TG：[https://t.me/Nuanxinqing](https://t.me/Nuanxinqing)
 Email：nuanxinqing@gmail.com
 
 ## 🧩当前版本日志
-- Docker热更新存在问题，请手动拉镜像更新
-- 修复 前端：容器管理面板空白选项
-- 修改 投稿正则表单描述错误
-- 新增 支持青龙2.10.13以及相关联版本的支持
+- 修复 Docker 热更新问题
+- 修复 更新模式的逻辑错误导致会覆盖原有变量备注信息（未）
+- 修复 变量过多时，提交出现会不在白名单错误（未）
+- 修复 热更新逻辑错误
+- 新增 更新模式在更新变量后自动启用变量（未）
+- 新增 插件模式新增正则匹配函数（未）
+- 新增 管理员邮箱修改（未）
+- 新增 前端：对游客隐藏注册登录按钮（未）
+- 新增 前端：针对管理员和游客提交增加不同的提示信息，方便管理员排查问题（未）
+- 新增 前端：面板绑定变量提示（未）
+- 新增 Docker启动命令增加自启动
+
 
 ## 📔自行构建步骤
 ```shell
