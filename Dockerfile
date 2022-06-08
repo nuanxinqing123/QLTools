@@ -26,7 +26,8 @@ RUN \
   go build -ldflags '-linkmode external -s -w -extldflags "-static"' -o QLTools-linux-$TARGETARCH
   
 
-FROM alpine:3.15
+# FROM alpine:3.15
+FROM ubuntu:latest
 
 MAINTAINER QLTools "nuanxinqing@gmail.com"
 

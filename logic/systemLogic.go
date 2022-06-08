@@ -71,7 +71,12 @@ func UpdateSoftWare(version, GOOS string) {
 	gh, _ := sqlite.GetSetting("ghProxy")
 
 	var url string
-	url = AddStringHTTP(gh.Value) + "https://github.com/nuanxinqing123/QLTools/releases/download/" + version
+	if gh.Value != "" {
+		url = AddStringHTTP(gh.Value) + "https://github.com/nuanxinqing123/QLTools/releases/download/" + version
+	} else {
+		url = "https://github.com/nuanxinqing123/QLTools/releases/download/" + version
+	}
+
 	if GOOS == "amd64" {
 		url += "/QLTools-linux-amd64"
 	} else if GOOS == "arm64" {
