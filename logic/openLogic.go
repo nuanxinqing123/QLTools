@@ -251,14 +251,16 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 						// 一致，更新变量
 						QCount = 100
 						co = 0
+						// 如果原有变量的备注是否为空
 						if t.Data[i].Remarks != "" {
+							// 用户提交备注是否为空
 							if p.EnvRemarks == "" {
 								if t.Data[i].OId != "" {
 									idDate = t.Data[i].OId
-									data = `{"_id": "` + t.Data[i].OId + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+									data = `{"_id": "` + t.Data[i].OId + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + t.Data[i].Remarks + `"}`
 								} else {
 									idDate = strconv.Itoa(t.Data[i].ID)
-									data = `{"id": "` + strconv.Itoa(t.Data[i].ID) + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
+									data = `{"id": "` + strconv.Itoa(t.Data[i].ID) + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + t.Data[i].Remarks + `"}`
 								}
 							} else {
 								if t.Data[i].OId != "" {
