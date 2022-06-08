@@ -98,7 +98,7 @@ func RePwd(p *model.ReAdminPwd) (bool, res.ResCode) {
 		return false, res.CodeOldPassWordError
 	} else {
 		// 储存新密码
-		err := sqlite.UpdateUserData(md5.AddMD5(p.Password))
+		err := sqlite.UpdateUserData(p.Email, md5.AddMD5(p.Password))
 		if err != nil {
 			return false, res.CodeServerBusy
 		}

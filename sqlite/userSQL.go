@@ -61,7 +61,7 @@ func CheckAdmin(userID interface{}) bool {
 }
 
 // UpdateUserData 更新用户信息
-func UpdateUserData(pwd string) error {
+func UpdateUserData(email, pwd string) error {
 	var user model.User
 	// 获取管理员信息
 	result := DB.First(&user)
@@ -69,6 +69,9 @@ func UpdateUserData(pwd string) error {
 		return result.Error
 	}
 	// 更新数据
+	if email != "" {
+		user.Email = email
+	}
 	user.Password = pwd
 	// 储存数据
 	result = DB.Save(&user)
