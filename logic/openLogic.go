@@ -104,11 +104,12 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		return res.CodeDataIsNull, ""
 	}
 
-	var token model.Token
+	var token model.PanelRes
 	// 校验服务器ID
 	result, sData := sqlite.CheckServerDoesItExist(p.ServerID)
 	if result != true {
 		// 服务器不存在
+		zap.L().Debug("提交容器不存在：" + strconv.Itoa(p.ServerID))
 		return res.CodeErrorOccurredInTheRequest, ""
 	}
 
@@ -116,16 +117,22 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 	resultEnv, eData := sqlite.CheckEnvNameDoesItExist(p.EnvName)
 	if resultEnv != true {
 		// 变量不存在
+		zap.L().Debug("提交变量名不存在：" + p.EnvName)
 		return res.CodeErrorOccurredInTheRequest, ""
 	}
 
 	// 转换切片
-	envBind := strings.Split(sData.EnvBinding, "")
+	envBind := strings.Split(sData.EnvBinding, "@")
 	// 校验变量是否处于容器白名单
+	zap.L().Debug("校验变量是否处于容器白名单")
+	zap.L().Debug("提交值：" + strconv.Itoa(int(eData.ID)))
 	num := 0
 	for i := 0; i < len(envBind); i++ {
-		if envBind[i] == strconv.Itoa(int(eData.ID)) {
-			num++
+		zap.L().Debug("变量绑定数据：" + envBind[i])
+		if envBind[i] != "" {
+			if envBind[i] == strconv.Itoa(int(eData.ID)) {
+				num++
+			}
 		}
 	}
 	if num == 0 {
@@ -190,13 +197,15 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 	// 是否启用插件
 	if eData.IsPlugin != false {
 		// 启用插件, 传入插件名称和变量
-		js, s2, err := goja.RunJS(eData.PluginName, s2)
+		zap.L().Debug("变量：" + eData.Name + "  启用插件：" + eData.PluginName)
+		js, s3, err := goja.RunJS(eData.PluginName, s2)
 		if err != nil {
 			return res.CodeCustomError, err.Error()
 		}
 		if js != true {
-			return res.CodeNoAdmittance, s2
+			return res.CodeNoAdmittance, s3
 		}
+		s2 = s3
 	}
 
 	// 提交到服务器

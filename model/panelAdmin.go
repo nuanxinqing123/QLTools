@@ -91,6 +91,12 @@ type Token struct {
 	Message string
 }
 
+// PanelRes 面板Token数据
+type PanelRes struct {
+	Code    int `json:"code"`
+	Message string
+}
+
 // EnvData 面板变量数据
 type EnvData struct {
 	Code int       `json:"code"`
