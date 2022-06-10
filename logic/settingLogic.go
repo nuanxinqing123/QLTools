@@ -26,6 +26,8 @@ func GetSetting(name string) (model.WebSettings, res.ResCode) {
 		return data, res.CodeSuccess
 	} else if name == "backgroundImage" {
 		return data, res.CodeSuccess
+	} else if name == "webTitle" {
+		return data, res.CodeSuccess
 	} else {
 		return data, res.CodeServerBusy
 	}

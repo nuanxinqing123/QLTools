@@ -21,6 +21,9 @@ func GetSetting(c *gin.Context) {
 	key := c.Query("key")
 	data, resCode := logic.GetSetting(key)
 	switch resCode {
+	case res.CodeServerBusy:
+		// 越权
+		res.ResErrorWithMsg(c, res.CodeServerBusy, "获取内容为空")
 	case res.CodeSuccess:
 		// 获取成功
 		res.ResSuccess(c, data)
