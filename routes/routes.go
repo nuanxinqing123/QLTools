@@ -134,6 +134,21 @@ func Setup() *gin.Engine {
 			// 插件：读取plugin目录下所有插件
 			ad.GET("javascript/readall", controllers.JavascriptReadall)
 
+			// CDK：以20条数据分割
+			ad.GET("cd-key/division/data", controllers.GetDivisionCDKData)
+			// CDK：获取全部信息/启用/禁用
+			ad.GET("cd-key/data", controllers.GetCDKData)
+			// CDK：批量新增
+			ad.POST("cd-key/add", controllers.CreateCDKData)
+			// CDK：下载生成CDK文件
+			ad.GET("cd-key/data/download", controllers.DownloadCDKData)
+			// CDK：全部启用/禁用
+			ad.PUT("cd-key/all/state", controllers.CDKState)
+			// CDK：修改
+			ad.PUT("cd-key/update", controllers.UpdateCDK)
+			// CDK：删除
+			ad.DELETE("cd-key/delete", controllers.DelCDK)
+
 			// 消息推送: 获取信息
 			ad.GET("message/data", controllers.GetEmailData)
 			// 消息推送: 测速发送
