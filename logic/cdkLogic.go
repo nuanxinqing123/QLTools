@@ -91,16 +91,16 @@ func CreateCDKData(p *model.CreateCDK) res.ResCode {
 	// 创建记录数组
 	var li []string
 
+	// 创建对象
+	cdk := new(model.CDK)
+
+	cdk.AvailableTimes = p.CdKeyAvailableTimes
+	cdk.State = true
 	// 获取生成数量
 	for i := 0; i < p.CdKeyCount; i++ {
-		// 创建对象
-		cdk := new(model.CDK)
-
 		// 生成用户UID
 		uid := ksuid.New()
 		cdk.CdKey = uid.String()
-		cdk.AvailableTimes = p.CdKeyCount
-		cdk.State = true
 
 		// 加入数组
 		li = append(li, cdk.CdKey)

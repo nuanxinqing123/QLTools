@@ -40,6 +40,7 @@ func AddEnvName(data *model.EnvNameAdd) (err error) {
 	e.ReUpdate = data.EnvReUpdate
 	e.IsPlugin = data.EnvIsPlugin
 	e.PluginName = data.EnvPluginName
+	e.IsCDK = data.EnvIsCDK
 	err = DB.Create(&e).Error
 	if err != nil {
 		zap.L().Error("Insert data error, err:", zap.Error(err))
@@ -62,6 +63,7 @@ func UpdateEnvName(data *model.EnvNameUp) {
 	d.ReUpdate = data.EnvReUpdate
 	d.IsPlugin = data.EnvIsPlugin
 	d.PluginName = data.EnvPluginName
+	d.IsCDK = data.EnvIsCDK
 	DB.Save(&d)
 }
 

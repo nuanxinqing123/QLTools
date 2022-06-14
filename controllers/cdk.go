@@ -35,7 +35,7 @@ func GetCDKData(c *gin.Context) {
 	method := c.Query("method")
 	var data []model.CDK
 	var resCode res.ResCode
-	if method == "" {
+	if method == "all" {
 		// 查询全部数据
 		resCode, data = logic.GetCDKData(1)
 	} else if method == "true" {

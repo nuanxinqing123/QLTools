@@ -71,7 +71,11 @@ func GetOneCDKData(cdk string) []model.CDK {
 
 // InsertCDKData 生成CDK写入数据库
 func InsertCDKData(p *model.CDK) {
-	DB.Create(&p)
+	var cdk model.CDK
+	cdk.CdKey = p.CdKey
+	cdk.AvailableTimes = p.AvailableTimes
+	cdk.State = p.State
+	DB.Create(&cdk)
 }
 
 // UpdateCDKDataState 批量更新CDK状态
