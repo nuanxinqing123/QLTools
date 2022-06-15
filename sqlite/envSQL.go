@@ -146,6 +146,10 @@ func InsertSubmitRecord(ip string) {
 func UpdateCDKAvailableTimes(p *model.EnvAdd) {
 	// 查询CDK
 	cdk := GetCDKData(p.EnvCDK)
-	cdk.AvailableTimes -= 1
-	DB.Save(&cdk)
+	// 查询变量
+	_, eData := CheckEnvNameDoesItExist(p.EnvName)
+	if eData.IsCDK != false {
+		cdk.AvailableTimes -= 1
+		DB.Save(&cdk)
+	}
 }

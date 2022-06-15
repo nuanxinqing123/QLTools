@@ -59,7 +59,11 @@ func EnvData() (res.ResCode, model.EnvStartServer) {
 			url := panel.StringHTTP(sData[i].URL) + "/open/envs?searchValue=&t=" + strconv.Itoa(sData[i].Params)
 			allData, err := requests.Requests("GET", url, "", sData[i].Token)
 			if err != nil {
-				return res.CodeServerBusy, sd
+				zap.L().Error("面板：" + sData[i].PanelName + ", 已无法连接，请管理员尽快处理")
+				sd.ServerData[i].Name = "服务器已失去连接（禁止提交）"
+				sd.ServerData[i].ID = -100
+				continue
+				//return res.CodeServerBusy, sd
 			}
 			var token model.EnvData
 			err = json.Unmarshal(allData, &token)
@@ -74,7 +78,8 @@ func EnvData() (res.ResCode, model.EnvStartServer) {
 				go panel.GetPanelToken(sData[i].URL, sData[i].ClientID, sData[i].ClientSecret)
 
 				// 未授权或Token失效
-				return res.CodeDataError, sd
+				continue
+				//return res.CodeDataError, sd
 			}
 
 			// 计算变量剩余限额
@@ -207,8 +212,10 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		zap.L().Debug("处理正则失败")
 		return res.CodeServerBusy, ""
 	} else if c <= 0 {
-		zap.L().Debug("限额已满，禁止提交")
-		return res.CodeLocationFull, ""
+		if eData.Mode != 3 {
+			zap.L().Debug("限额已满，禁止提交")
+			return res.CodeLocationFull, ""
+		}
 	}
 
 	// 检查重复提交
@@ -357,7 +364,12 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 			}()
 		} else {
 			// 面板不存在变量时新建(POST)
-			r, err = requests.Requests("POST", url, data, sData.Token)
+			if c <= 0 {
+				zap.L().Debug("限额已满，禁止提交")
+				return res.CodeLocationFull, ""
+			} else {
+				r, err = requests.Requests("POST", url, data, sData.Token)
+			}
 		}
 	}
 
