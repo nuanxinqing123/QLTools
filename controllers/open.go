@@ -205,9 +205,14 @@ func EnvADD(c *gin.Context) {
 	case res.CodeNoAdmittance:
 		// 数据禁止通过
 		res.ResErrorWithMsg(c, res.CodeNoAdmittance, msg)
+	case res.CodeCDKError:
+		res.ResErrorWithMsg(c, res.CodeCDKError, msg)
 	case res.CodeSuccess:
-		// 上传成功
+		// 记录上传IP
 		go sqlite.InsertSubmitRecord(c.ClientIP())
+		// 更新CDK使用次数
+		go sqlite.UpdateCDKAvailableTimes(p)
+		// 上传成功
 		res.ResSuccess(c, "上传成功")
 	}
 }

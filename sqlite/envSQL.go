@@ -141,3 +141,11 @@ func InsertSubmitRecord(ip string) {
 	lr.IPAddress = ip
 	DB.Create(&lr)
 }
+
+// UpdateCDKAvailableTimes 更新CDK使用次数
+func UpdateCDKAvailableTimes(p *model.EnvAdd) {
+	// 查询CDK
+	cdk := GetCDKData(p.EnvCDK)
+	cdk.AvailableTimes -= 1
+	DB.Save(&cdk)
+}

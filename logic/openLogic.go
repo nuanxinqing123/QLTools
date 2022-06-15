@@ -139,6 +139,32 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		return res.CodeErrorOccurredInTheRequest, ""
 	}
 
+	// 校验CDK是否受限
+	if eData.IsCDK != false {
+		// 需要校验CKD, 校验CDK是否存在
+		if p.EnvCDK != "" {
+			// 查询CDK是否存在
+			cdk := sqlite.GetCDKData(p.EnvCDK)
+			if cdk.CdKey == "" {
+				// CDK查询为空
+				return res.CodeCDKError, "您的CDK已失效"
+			}
+
+			// CDK是否被禁用
+			if cdk.State == false {
+				// CDK已被管理员禁用
+				return res.CodeCDKError, "您的CDK已被禁用"
+			}
+
+			if cdk.AvailableTimes <= 0 {
+				// 当前CDK使用次数已耗尽
+				return res.CodeCDKError, "您CDK使用次数已耗尽"
+			}
+		} else {
+			return res.CodeCDKError, "需要校验CDK，请点击右上角按钮填写您的CDK"
+		}
+	}
+
 	// 正则处理(检查是否符合规则)
 	var s [][]string
 	if eData.Regex != "" {

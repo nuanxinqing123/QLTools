@@ -77,4 +77,6 @@ type EnvAdd struct {
 	EnvData string `json:"envData"  binding:"required"`
 	// 备注
 	EnvRemarks string `json:"envRemarks"`
+	// CDK
+	EnvCDK string `json:"envCDK"`
 }

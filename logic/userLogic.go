@@ -215,7 +215,7 @@ func CheckCDK(p *model.CheckCDK) (res.ResCode, string) {
 
 	if c.AvailableTimes <= 0 {
 		// 当前CDK使用次数已耗尽
-		return res.CodeSuccess, "当前CDK使用次数已耗尽"
+		return res.CodeSuccess, "您CDK使用次数已耗尽"
 	}
 
 	return res.CodeSuccess, "您的CDK剩余使用次数：" + strconv.Itoa(c.AvailableTimes)
