@@ -197,3 +197,26 @@ func GetAdminInfo() (string, res.ResCode) {
 	_, info := sqlite.GetUserData()
 	return info.Username, res.CodeSuccess
 }
+
+// CheckCDK 检查CDK数据
+func CheckCDK(p *model.CheckCDK) (res.ResCode, string) {
+	// 查询CDK是否存在
+	c := sqlite.GetCDKData(p.CDK)
+	if c.CdKey == "" {
+		// CDK查询为空
+		return res.CodeSuccess, ""
+	}
+
+	// CDK是否被禁用
+	if c.State == false {
+		// CDK已被管理员禁用
+		return res.CodeSuccess, "您的CDK已被禁用"
+	}
+
+	if c.AvailableTimes <= 0 {
+		// 当前CDK使用次数已耗尽
+		return res.CodeSuccess, "当前CDK使用次数已耗尽"
+	}
+
+	return res.CodeSuccess, "您的CDK剩余使用次数：" + strconv.Itoa(c.AvailableTimes)
+}

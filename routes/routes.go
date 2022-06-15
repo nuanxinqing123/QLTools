@@ -67,6 +67,8 @@ func Setup() *gin.Engine {
 			open.POST("check/token", controllers.CheckToken)
 			// 设置：获取单个配置
 			open.GET("set/setting", controllers.GetSetting)
+			// CDK状态检查
+			open.POST("check/cdk", controllers.CheckCDK)
 
 			// 可用服务
 			open.GET("index/data", controllers.IndexData)

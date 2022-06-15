@@ -107,3 +107,10 @@ func DelCDKData(p *model.DelCDK) {
 	DB.Where("id = ? ", p.ID).First(&cdk)
 	DB.Delete(&cdk)
 }
+
+// GetCDKData 查询CDK信息
+func GetCDKData(p string) model.CDK {
+	var c model.CDK
+	DB.Where("cd_key = ?", p).First(&c)
+	return c
+}

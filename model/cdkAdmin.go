@@ -38,3 +38,7 @@ type CDKPageData struct {
 	Page    int64 `json:"page"`    // 总页数
 	CDKData []CDK `json:"CDKData"` // 分页查询CDK数据
 }
+
+type CheckCDK struct {
+	CDK string `json:"CDK" binding:"required"`
+}
