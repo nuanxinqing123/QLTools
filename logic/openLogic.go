@@ -244,6 +244,7 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 	// 提交到服务器
 	var data string
 	var idDate string
+	var qlVersion string
 	url := panel.StringHTTP(sData.URL) + "/open/envs?t=" + strconv.Itoa(sData.Params)
 	idDateUrl := panel.StringHTTP(sData.URL) + "/open/envs/enable?t=" + strconv.Itoa(sData.Params)
 	zap.L().Debug(url)
@@ -299,26 +300,32 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 							if p.EnvRemarks == "" {
 								if t.Data[i].OId != "" {
 									idDate = t.Data[i].OId
+									qlVersion = "旧版本"
 									data = `{"_id": "` + t.Data[i].OId + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + t.Data[i].Remarks + `"}`
 								} else {
 									idDate = strconv.Itoa(t.Data[i].ID)
+									qlVersion = "新版本"
 									data = `{"id": "` + strconv.Itoa(t.Data[i].ID) + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + t.Data[i].Remarks + `"}`
 								}
 							} else {
 								if t.Data[i].OId != "" {
 									idDate = t.Data[i].OId
+									qlVersion = "旧版本"
 									data = `{"_id": "` + t.Data[i].OId + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 								} else {
 									idDate = strconv.Itoa(t.Data[i].ID)
+									qlVersion = "新版本"
 									data = `{"id": "` + strconv.Itoa(t.Data[i].ID) + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 								}
 							}
 						} else {
 							if t.Data[i].OId != "" {
 								idDate = t.Data[i].OId
+								qlVersion = "旧版本"
 								data = `{"_id": "` + t.Data[i].OId + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 							} else {
 								idDate = strconv.Itoa(t.Data[i].ID)
+								qlVersion = "新版本"
 								data = `{"id": "` + strconv.Itoa(t.Data[i].ID) + `", "value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 							}
 						}
@@ -335,6 +342,7 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		}
 
 		if co != 0 {
+			qlVersion = "新版本"
 			data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
 			QCount = -1
 		}
@@ -358,7 +366,14 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		if QCount != -1 {
 			r, err = requests.Requests("PUT", url, data, sData.Token)
 			// 启用禁用变量
-			EnableID := `[` + idDate + `]`
+			var EnableID string
+			if qlVersion == "新版本" {
+				EnableID = "[" + idDate + "]"
+			} else {
+				// 旧版本
+				EnableID = `["` + idDate + `"]`
+			}
+			zap.L().Debug("启用禁用变量：" + EnableID)
 			go func() {
 				_, _ = requests.Requests("PUT", idDateUrl, EnableID, sData.Token)
 			}()
