@@ -7,6 +7,7 @@
 package jwt
 
 import (
+	"QLPanelTools/sqlite"
 	"errors"
 	"github.com/golang-jwt/jwt"
 	"go.uber.org/zap"
@@ -17,7 +18,7 @@ import (
 const TokenExpireDuration = time.Hour * 24 * 7
 
 // 加盐
-var mySecret = []byte("44tEeUAVxTKxcU6We9dc")
+//var mySecret = []byte("44tEeUAVxTKxcU6We9dc")
 
 // MyClaims 自定义声明结构体并内嵌jwt.StandardClaims
 // jwt包自带的jwt.StandardClaims只包含了官方字段
@@ -31,13 +32,20 @@ type MyClaims struct {
 
 // GenToken 生成JWT
 func GenToken(userID int64, email string) (string, error) {
+	// 获取密钥
+	jwtKey := sqlite.GetJWTKey()
+
+	// 加盐
+	var mySecret = []byte(jwtKey)
+	zap.L().Debug(jwtKey)
+
 	// 创建声明数据
 	c := MyClaims{
 		UserID: userID,
 		Email:  email,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(TokenExpireDuration).Unix(), // 过期时间
-			Issuer:    "QLPanelTools",                             // 签发人
+			Issuer:    "QLTools",                                  // 签发人
 		},
 	}
 
@@ -50,6 +58,13 @@ func GenToken(userID int64, email string) (string, error) {
 
 // ParseToken 解析Token
 func ParseToken(tokenString string) (*MyClaims, error) {
+	// 获取密钥
+	jwtKey := sqlite.GetJWTKey()
+
+	// 加盐
+	var mySecret = []byte(jwtKey)
+	zap.L().Debug(jwtKey)
+
 	// 解析Token
 	var mc = new(MyClaims)
 	token, err := jwt.ParseWithClaims(tokenString, mc, func(token *jwt.Token) (interface{}, error) {
