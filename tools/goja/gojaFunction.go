@@ -223,3 +223,12 @@ func refind(re, data string) interface{} {
 func ReFind() interface{} {
 	return refind
 }
+
+// Replace 字符串替换
+func Replace(s, old, new string, count int) interface{} {
+	c := 1
+	if count != 0 {
+		c = count
+	}
+	return strings.Replace(s, old, new, c)
+}

@@ -66,6 +66,7 @@ func RunJS(filename, env string) (bool, string, error) {
 	vm.Set("console", console)
 	vm.Set("refind", refind)
 	vm.Set("ReFind", ReFind)
+	vm.Set("Replace", Replace)
 	_, err = vm.RunString(template)
 	if err != nil {
 		// JS代码有问题
