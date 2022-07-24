@@ -8,11 +8,12 @@ package sqlite
 
 import (
 	"QLPanelTools/model"
+	"math/rand"
+	"time"
+
 	"go.uber.org/zap"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"math/rand"
-	"time"
 )
 
 var DB *gorm.DB

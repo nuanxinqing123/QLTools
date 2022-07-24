@@ -53,7 +53,7 @@ type UserSignIn struct {
 // ReAdminPwd 修改密码模型
 type ReAdminPwd struct {
 	OldPassword string `json:"old_password" binding:"required"`
-	Email       string `json:"email" binding:"required"`
+	Email       string `json:"email"`
 	Password    string `json:"password" binding:"required"`
 	RePassword  string `json:"re_password" binding:"required,eqfield=Password"`
 }

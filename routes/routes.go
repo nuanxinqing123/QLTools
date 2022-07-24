@@ -11,12 +11,13 @@ import (
 	"QLPanelTools/controllers"
 	"QLPanelTools/logger"
 	"QLPanelTools/middleware"
-	assetfs "github.com/elazarl/go-bindata-assetfs"
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"html/template"
 	"strings"
 	"time"
+
+	assetfs "github.com/elazarl/go-bindata-assetfs"
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 func Setup() *gin.Engine {

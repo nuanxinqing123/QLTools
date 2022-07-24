@@ -11,11 +11,12 @@ import (
 	"QLPanelTools/sqlite"
 	res "QLPanelTools/tools/response"
 	"bufio"
-	"github.com/segmentio/ksuid"
-	"go.uber.org/zap"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/segmentio/ksuid"
+	"go.uber.org/zap"
 )
 
 // GetDivisionCDKData CDK：以20条数据分割
