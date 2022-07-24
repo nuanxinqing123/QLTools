@@ -38,6 +38,11 @@ app:
 ```
 
 ## 🔍安装教程
+默认后台信息：
+- 登录地址：IP或域名:15000/#/login
+- 注册地址：IP或域名:15000/#/register
+- 后台地址：IP或域名:15000/#/admin
+
 Tips: 
 - 测试版不提供Docker镜像 
 - 删除config目录里面的app.db文件就相当于重装青龙Tools
@@ -81,18 +86,10 @@ TG：[https://t.me/Nuanxinqing](https://t.me/Nuanxinqing)
 Email：nuanxinqing@gmail.com
 
 ## 🧩当前版本日志
-- 修复 面板失联时导致前端页面空白错误
-- 修复 变量限额为0时，更新模式无法正常判断变量状态
-- 修复 青龙面板为旧版本时，更新模式更新后无法自动启用
-- 修复 JWT签名密钥修改为随机生成，避免管理员账号被渗透爆破
-- 更新 变量管理模块新增CDK绑定
-- 更新 前端：修改后台部分描述文本
-- 更新 前端：变量管理操作模块移动至最前选项卡
-- 更新 前端：修改前台部分错误提示描述文本
-- 更新 前端：网站标签Title支持同网站Title一致
-- 更新 前端：所有按钮展示样式优化
-- 新增 CD-KEY模块
-- 新增 前端：CD-KEY模块
+- 修复修改管理员密码功能一个小Bug
+- 插件新增函数：console、Replace
+- 前端：新增JS文件混淆，防止小白逆向
+- 前端：优化首页CDK显示
 
 
 ## 📔自行构建步骤
@@ -109,6 +106,11 @@ go-bindata -o=bindata/bindata.go -pkg=bindata ./assets/...
 
 # 打包
 go build
+
+# XGO 批量打包
+xgo -out QLTools --targets=windows/*,linux/* 青龙Tools代码路径
+# 举例
+xgo -out QLTools --targets=windows/*,linux/* /home/Go/QLTools
 ```
 
 ## 📷演示图
