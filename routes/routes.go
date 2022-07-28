@@ -59,6 +59,7 @@ func Setup() *gin.Engine {
 	{
 		// 开放权限组
 		open := r.Group("v1/api")
+		open.Use(middleware.Cors()) // 允许跨域
 		{
 			// 账户注册
 			open.POST("signup", controllers.SignUpHandle)
