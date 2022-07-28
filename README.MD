@@ -79,17 +79,15 @@ docker run --restart=always -itd --name QLTools -v $PWD/config:/QLTools/config -
 
 开发计划 & 进度：[点击查看](https://web.banlikanban.com/kanban/626f9b4c6ade1220282ac551)
 
-招募一位热心愿意一起开发的前端小伙伴，嘿嘿。我前端太差了
+【联系方式】
 
 TG：[https://t.me/Nuanxinqing](https://t.me/Nuanxinqing)
 
 Email：nuanxinqing@gmail.com
 
 ## 🧩当前版本日志
-- 修复修改管理员密码功能一个小Bug
-- 插件新增函数：console、Replace
-- 前端：新增JS文件混淆，防止小白逆向
-- 前端：优化首页CDK显示
+- Open公开api路由增加跨域支持
+- 
 
 
 ## 📔自行构建步骤
