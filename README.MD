@@ -14,10 +14,12 @@
 - 支持多容器上传管控
 - 容器独享变量限额
 - 自选服务器和变量组上传
+- 自助识别添加面板已存在变量信息（未）
 - 支持变量黑名单 & IP提交次数限制
 - 支持容器相互迁移 & 复制 & 备份 & 恢复
 - 插件模式（可将自行编写插件绑定到变量上使用）
 - 程序热更新（快速更新版本）
+- 多种主题随意切换（前端页面自助编写）（未）
 
 ## 🍳技术栈
 - 语言：Golang
@@ -38,7 +40,7 @@ app:
 ```
 
 ## 🔍安装教程
-默认后台信息：
+默认后台信息【第一次运行需要先注册账户，没有默认账户】
 - 登录地址：IP或域名:15000/#/login
 - 注册地址：IP或域名:15000/#/register
 - 后台地址：IP或域名:15000/#/admin
@@ -85,9 +87,15 @@ TG：[https://t.me/Nuanxinqing](https://t.me/Nuanxinqing)
 
 Email：nuanxinqing@gmail.com
 
+【交流群】
+
+青龙Tools频道：[https://t.me/qltool](https://t.me/qltool)
+
+青龙Tools吹水群：[https://t.me/qltools](https://t.me/qltools)
+
 ## 🧩当前版本日志
+
 - Open公开api路由增加跨域支持
-- 
 
 
 ## 📔自行构建步骤
