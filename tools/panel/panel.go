@@ -7,8 +7,8 @@
 package panel
 
 import (
-	"QLPanelTools/model"
-	"QLPanelTools/sqlite"
+	"QLPanelTools/server/model"
+	"QLPanelTools/server/sqlite"
 	"QLPanelTools/tools/requests"
 	res "QLPanelTools/tools/response"
 	"encoding/json"

@@ -7,7 +7,7 @@
 package email
 
 import (
-	"QLPanelTools/sqlite"
+	"QLPanelTools/server/sqlite"
 	"gopkg.in/gomail.v2"
 	"regexp"
 )

@@ -8,10 +8,10 @@ package main
 
 import (
 	_const "QLPanelTools/const"
-	"QLPanelTools/logger"
-	"QLPanelTools/routes"
-	"QLPanelTools/settings"
-	"QLPanelTools/sqlite"
+	"QLPanelTools/server"
+	"QLPanelTools/server/settings"
+	"QLPanelTools/server/sqlite"
+	"QLPanelTools/tools/logger"
 	"QLPanelTools/tools/snowflake"
 	"QLPanelTools/tools/validator"
 	"context"

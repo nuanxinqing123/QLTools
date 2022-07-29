@@ -7,7 +7,7 @@
 package jwt
 
 import (
-	"QLPanelTools/sqlite"
+	"QLPanelTools/server/sqlite"
 	"errors"
 	"github.com/golang-jwt/jwt"
 	"go.uber.org/zap"
