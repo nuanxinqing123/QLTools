@@ -107,16 +107,20 @@ git clone https://github.com/nuanxinqing123/QLTools.git && cd QLTools
 # 更新项目依赖
 go mod tidy
 
-# 构建前端静态文件（需要安装go-bindata）
-go-bindata -o=bindata/bindata.go -pkg=bindata ./assets/...
-
 # 打包
 go build
+
+-------------------------------------------------------------
 
 # XGO 批量打包
 xgo -out QLTools --targets=windows/*,linux/* 青龙Tools代码路径
 # 举例
 xgo -out QLTools --targets=windows/*,linux/* /home/Go/QLTools
+
+-------------------------------------------------------------
+
+# 自行编写的构建前端静态文件（需要安装go-bindata）
+go-bindata -o=bindata/bindata.go -pkg=bindata ./assets/...
 ```
 
 ## 📷演示图

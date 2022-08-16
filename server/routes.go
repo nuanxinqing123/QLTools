@@ -11,11 +11,11 @@ import (
 	"QLPanelTools/server/middleware"
 	"QLPanelTools/static/bindata"
 	"QLPanelTools/tools/logger"
+	assetfs "github.com/elazarl/go-bindata-assetfs"
 	"html/template"
 	"strings"
 	"time"
 
-	assetfs "github.com/elazarl/go-bindata-assetfs"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )

@@ -36,7 +36,7 @@ func main() {
 	// 判断注册默认配置文件
 	bol := IFConfig("config/config.yaml")
 	if bol != true {
-		fmt.Println("自动生成配置文件失败, 请按照仓库的配置文件模板手动在config目录下创建config.yaml配置文件")
+		fmt.Println("自动生成配置文件失败, 请按照仓库的配置文件模板手动在config目录下创建 config.yaml 配置文件")
 		return
 	}
 	// 判断注册插件文件夹

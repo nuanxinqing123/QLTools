@@ -147,7 +147,7 @@ func IndexData(c *gin.Context) {
 		// 内部服务错误
 		res.ResError(c, res.CodeServerBusy)
 	case res.CodeSuccess:
-		// 登录成功,返回Token
+		// 获取成功,返回内容
 		res.ResSuccess(c, data)
 	}
 }
@@ -192,7 +192,7 @@ func EnvADD(c *gin.Context) {
 	case res.CodeEnvDataMismatch:
 		res.ResErrorWithMsg(c, res.CodeEnvDataMismatch, "上传内容不符合规定, 请检查后再提交")
 	case res.CodeDataIsNull:
-		res.ResErrorWithMsg(c, res.CodeDataIsNull, "上传内容能为空")
+		res.ResErrorWithMsg(c, res.CodeDataIsNull, "上传内容不能为空")
 	case res.CodeLocationFull:
 		res.ResErrorWithMsg(c, res.CodeLocationFull, "限额已满，禁止提交")
 	case res.CodeNoDuplicateSubmission:

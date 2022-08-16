@@ -8,6 +8,7 @@ require (
 	github.com/dop251/goja v0.0.0-20220501172647-e1eca0b61fa9
 	github.com/elazarl/go-bindata-assetfs v1.0.1
 	github.com/fsnotify/fsnotify v1.5.4
+	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
@@ -15,6 +16,7 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/juju/ratelimit v1.0.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
+	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/viper v1.12.0
 	github.com/staktrace/go-update v0.0.0-20210525161054-fc019945f9a2
 	go.uber.org/zap v1.21.0
@@ -44,7 +46,6 @@ require (
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/shiena/ansicolor v0.0.0-20200904210342-c7312218db18 // indirect
 	github.com/spf13/afero v1.8.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
