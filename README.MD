@@ -96,7 +96,8 @@ Email：nuanxinqing@gmail.com
 ## 🧩当前版本日志
 
 - Open公开api路由增加跨域支持
-
+- 修复IP查询接口失效问题
+- 架构布局优化
 
 ## 📔自行构建步骤
 ```shell
