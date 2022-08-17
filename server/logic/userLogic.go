@@ -16,7 +16,7 @@ import (
 	res "QLPanelTools/tools/response"
 	"QLPanelTools/tools/snowflake"
 	"QLPanelTools/tools/timeTools"
-	"fmt"
+	"encoding/json"
 	"go.uber.org/zap"
 	"strconv"
 	"time"
@@ -133,17 +133,37 @@ func CheckToken(p *model.CheckToken) (bool, res.ResCode) {
 // AddIPAddr 记录登录信息
 func AddIPAddr(ip string, ifok bool) {
 	// 查询IP地址
-	url := "https://api.iyk0.com/ip/?ip=" + ip
+	url := "https://ip.useragentinfo.com/json?ip=" + ip
 	addr, err := requests.Requests("GET", url, "", "")
 	if err != nil {
 		return
+	}
+
+	// 序列化
+	type location struct {
+		Country   string `json:"country"`
+		ShortName string `json:"short_name"`
+		Province  string `json:"province"`
+		City      string `json:"city"`
+		Area      string `json:"area"`
+		Isp       string `json:"isp"`
+		Net       string `json:"net"`
+		Ip        string `json:"ip"`
+		Code      int    `json:"code"`
+		Desc      string `json:"desc"`
+	}
+	var l location
+	// 数据绑定
+	err = json.Unmarshal(addr, &l)
+	if err != nil {
+		zap.L().Error(err.Error())
 	}
 
 	ipCreate := &model.LoginRecord{
 		LoginDay:  timeTools.SwitchTimeStampToDataYear(time.Now().Unix()),
 		LoginTime: timeTools.SwitchTimeStampToData(time.Now().Unix()),
 		IP:        ip,
-		IPAddress: fmt.Sprintf("%s", addr),
+		IPAddress: l.Country + l.Province + l.City + " | " + l.Isp,
 		IfOK:      ifok,
 	}
 	// 储存记录
