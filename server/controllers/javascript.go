@@ -10,14 +10,15 @@ import (
 	"QLPanelTools/server/model"
 	res "QLPanelTools/tools/response"
 	val "QLPanelTools/tools/validator"
-	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
-	"go.uber.org/zap"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"go.uber.org/zap"
 )
 
 // JavascriptUpload 上传插件
@@ -106,7 +107,7 @@ func JavascriptReadall(c *gin.Context) {
 	// 读取目录
 	var fl []model.FileInfo
 	var fi model.FileInfo
-	files, _ := ioutil.ReadDir(PluginPath)
+	files, _ := os.ReadDir(PluginPath)
 	for _, f := range files {
 		// 跳过不是JS的文件
 		if !strings.Contains(f.Name(), ".js") {
@@ -121,7 +122,7 @@ func JavascriptReadall(c *gin.Context) {
 			zap.L().Error(f.Name() + "：打开文件失败")
 		}
 		defer fd.Close()
-		v, _ := ioutil.ReadAll(fd)
+		v, _ := io.ReadAll(fd)
 		data := string(v)
 		FileIDName := ""
 		if regs := regexp.MustCompile(`\[name:(.+)]`).FindStringSubmatch(data); len(regs) != 0 {

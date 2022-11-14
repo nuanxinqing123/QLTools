@@ -124,6 +124,13 @@ xgo -out QLTools --targets=windows/*,linux/* /home/Go/QLTools
 go-bindata -o=bindata/bindata.go -pkg=bindata ./assets/...
 ```
 
+## 💰Pro版本
+如果 青龙Tools 无法满足你的需求，那么不妨看看它的 Pro 版本
+
+Pro版主页：https://pro.6b7.org
+
+使用说明书：https://www.yuque.com/sevesum/qk1dd7
+
 ## 📷演示图
 
 ![QQ截图20220511154438.png](https://pic.6b7.xyz/2022/05/11/25a5e41170f5f.png)
