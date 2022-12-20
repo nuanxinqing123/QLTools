@@ -16,7 +16,6 @@ import (
 	"QLPanelTools/tools/validator"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -188,7 +187,7 @@ func IFConfig(src string) bool {
 		}
 
 		// 写入默认配置
-		err = ioutil.WriteFile(src, data, 0777)
+		err = os.WriteFile(src, data, 0777)
 		if err != nil {
 			fmt.Printf("WriteFile Config Error: %s", err)
 			return false
@@ -207,19 +206,24 @@ func IFConfig(src string) bool {
 func IFPlugin() bool {
 	ExecPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
-		zap.L().Error(err.Error())
+		fmt.Println(err)
 		return false
 	}
 	_, err = os.Stat(ExecPath + "/plugin")
 	if err != nil {
 		err = os.Mkdir("plugin", 0777)
 		if err != nil {
-			fmt.Printf("Create Config Dir Error: %s", err)
-			return false
+			if err.Error() == "mkdir plugin: file exists" {
+				return true
+			} else {
+				fmt.Println(err)
+				return false
+			}
+
 		}
 		_, err2 := os.Stat(ExecPath + "/plugin")
 		if err2 != nil {
-			zap.L().Error(err.Error())
+			fmt.Println(err)
 			return false
 		}
 	}
