@@ -258,8 +258,21 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		// 合并模式
 		zap.L().Debug("上传变量：合并模式")
 		if QCount != -1 {
-			vv := t.Data[QCount].Value + eData.Division + s2
+			//vv := t.Data[QCount].Value + eData.Division + s2
 			p.EnvRemarks = t.Data[QCount].Name
+			vv := ""
+			sList := strings.Split(t.Data[QCount].Value, "\n")
+			zap.L().Debug("sList的数量是：" + strconv.Itoa(len(sList)))
+			if len(sList) != 1 {
+				for _, str := range sList {
+					vv += str + "\\n"
+				}
+				zap.L().Debug("合并前：" + vv)
+				vv = vv + s2
+				zap.L().Debug("合并后：" + vv)
+			} else {
+				vv = t.Data[QCount].Value + eData.Division + s2
+			}
 			if t.Data[QCount].OId != "" {
 				data = `{"_id": "` + t.Data[QCount].OId + `", "value": "` + vv + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}`
 			} else {
@@ -401,8 +414,9 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 
 	if token.Code >= 400 && token.Code <= 500 {
 		// 尝试更新Token
+		zap.L().Warn("上传错误警告：" + token.Message)
 		go panel.GetPanelToken(sData.URL, sData.ClientID, sData.ClientSecret)
-		return res.CodeStorageFailed, "发生一点小意外，请重新提交"
+		return res.CodeStorageFailed, token.Message
 	} else if token.Code >= 500 {
 		return res.CodeStorageFailed, "提交数据发生【500】错误，错误原因：" + token.Message
 	}
