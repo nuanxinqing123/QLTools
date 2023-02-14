@@ -3,12 +3,11 @@ module QLPanelTools
 go 1.18
 
 require (
-	github.com/beego/beego/v2 v2.0.2
+	github.com/beego/beego/v2 v2.0.4
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dop251/goja v0.0.0-20220501172647-e1eca0b61fa9
 	github.com/elazarl/go-bindata-assetfs v1.0.1
 	github.com/fsnotify/fsnotify v1.5.4
-	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
