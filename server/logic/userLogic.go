@@ -133,7 +133,7 @@ func CheckToken(p *model.CheckToken) (bool, res.ResCode) {
 // AddIPAddr 记录登录信息
 func AddIPAddr(ip string, ifok bool) {
 	// 查询IP地址
-	url := "https://ip.useragentinfo.com/json?ip=" + ip
+	url := "https://ip.useragentinfo.com/sp/TZb2y?ip=" + ip
 	addr, err := requests.Requests("GET", url, "", "")
 	if err != nil {
 		return

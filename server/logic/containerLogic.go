@@ -17,6 +17,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -258,20 +259,55 @@ func Restore(sID string) res.ResCode {
 
 // EnvUp 变量上传
 func EnvUp(p model.PanelAllEnv, url, token string, params int, journal string) {
-	// 获取数量
+	var re int
+	var panelData model.QLPanel
+
 	for i := 0; i < len(p.Data); i++ {
 		var data string
+		var pRes model.PanelRes
+
+		if re == 1 {
+			panelData = sqlite.GetPanelDataByURL(url)
+		}
+
+		zap.L().Debug("URL地址：" + url)
 		URL := panel.StringHTTP(url) + "/open/envs?t=" + strconv.Itoa(params)
+		// 将字符串里面的双引号添加转义
+		p.Data[i].Value = strings.ReplaceAll(p.Data[i].Value, `"`, `\"`)
 		// 上传
 		data = `[{"value": "` + p.Data[i].Value + `","name": "` + p.Data[i].Name + `","remarks": "` + p.Data[i].Remarks + `"}]`
 		// 执行上传任务
-		_, err := requests.Requests("POST", URL, data, token)
+		r, err := requests.Requests("POST", URL, data, token)
 		if err != nil {
 			// 记录错误
+			zap.L().Error("[容器：变量：上传]请求发送失败:" + err.Error())
 			sqlite.RecordingError(journal, err.Error())
 		}
-		// 休息0.5秒
-		time.Sleep(time.Second / 2)
+		// 序列化内容
+		err = json.Unmarshal(r, &pRes)
+		if err != nil {
+			zap.L().Error(err.Error())
+		}
+
+		if pRes.Code >= 401 && pRes.Code <= 500 {
+			// 更新Token, 再次提交
+			_, t := panel.GetPanelToken(panel.StringHTTP(url), panelData.ClientID, panelData.ClientSecret)
+			token = t.Data.Token
+			params = t.Data.Expiration
+			re = 1
+			i -= 1
+		} else if pRes.Code == 400 {
+			// 可能是重复上传，跳过
+			continue
+		} else if pRes.Code >= 500 {
+			// 青龙请求错误, 再次提交
+			i -= 1
+		} else if pRes.Code == 200 {
+			re = 0
+		}
+
+		// 限速
+		time.Sleep(time.Second / 8)
 	}
 }
 

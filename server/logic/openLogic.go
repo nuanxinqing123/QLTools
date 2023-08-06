@@ -249,6 +249,11 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 	idDateUrl := panel.StringHTTP(sData.URL) + "/open/envs/enable?t=" + strconv.Itoa(sData.Params)
 	zap.L().Debug(url)
 
+	// 将字符串里面的双引号添加转义
+	zap.L().Debug("转义前：" + s2)
+	s2 = strings.Replace(s2, `"`, `\"`, -1)
+	zap.L().Debug("转义后：" + s2)
+
 	// 指定上传数据
 	if eData.Mode == 1 {
 		// 新建模式
@@ -354,6 +359,10 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 			}
 		}
 
+		if len(t.Data) == 0 {
+			co++
+		}
+		zap.L().Debug("更新模式：是否需要新建变量：" + strconv.Itoa(co))
 		if co != 0 {
 			qlVersion = "新版本"
 			data = `[{"value": "` + s2 + `","name": "` + p.EnvName + `","remarks": "` + p.EnvRemarks + `"}]`
@@ -412,13 +421,17 @@ func EnvAdd(p *model.EnvAdd) (res.ResCode, string) {
 		return res.CodeServerBusy, ""
 	}
 
-	if token.Code >= 400 && token.Code <= 500 {
+	if token.Code > 400 && token.Code <= 500 {
 		// 尝试更新Token
 		zap.L().Warn("上传错误警告：" + token.Message)
 		go panel.GetPanelToken(sData.URL, sData.ClientID, sData.ClientSecret)
 		return res.CodeStorageFailed, token.Message
-	} else if token.Code >= 500 {
+	} else if token.Code >= 500 || token.Code == 400 {
 		return res.CodeStorageFailed, "提交数据发生【500】错误，错误原因：" + token.Message
+	}
+
+	if token.StatusCode == 400 {
+		return res.CodeStorageFailed, "提交数据发生【400】错误，错误原因：" + token.Message
 	}
 
 	return res.CodeSuccess, ""

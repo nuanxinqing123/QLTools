@@ -84,6 +84,14 @@ func GetPanelDataByID(id int) model.QLPanel {
 	return d
 }
 
+// GetPanelDataByURL 根据 URL 查询面板信息
+func GetPanelDataByURL(url string) model.QLPanel {
+	var d model.QLPanel
+	// 通过URL查询面板
+	DB.Where("url = ? ", url).First(&d)
+	return d
+}
+
 // UnbindPanelEnvData 解绑面板绑定变量
 func UnbindPanelEnvData(p model.QLPanel) {
 	DB.Save(&p)

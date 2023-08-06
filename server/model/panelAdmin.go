@@ -93,8 +93,9 @@ type Token struct {
 
 // PanelRes 面板Token数据
 type PanelRes struct {
-	Code    int `json:"code"`
-	Message string
+	Code       int `json:"code"`
+	StatusCode int `json:"statusCode"`
+	Message    string
 }
 
 // EnvData 面板变量数据
