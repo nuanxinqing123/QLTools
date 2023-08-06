@@ -123,6 +123,8 @@ xgo -out QLTools --targets=windows/*,linux/* /home/Go/QLTools
 
 # 自行编写的构建前端静态文件（需要安装go-bindata）
 go-bindata -o=bindata/bindata.go -pkg=bindata ./assets/...
+
+# 前端自行修改教程：https://6b7.org/518.html
 ```
 
 ## 💰Pro版本
