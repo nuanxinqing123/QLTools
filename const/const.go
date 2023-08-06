@@ -8,5 +8,5 @@ package _const
 
 // Version 全局变量
 const (
-	Version = "2.2"
+	Version = "2.3"
 )
