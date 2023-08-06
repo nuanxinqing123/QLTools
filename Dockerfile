@@ -1,4 +1,4 @@
-FROM  alpine:3.15 AS builder
+FROM  alpine:3.18.2 AS builder
 
 ARG TARGETARCH
 
