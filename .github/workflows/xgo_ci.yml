@@ -1,0 +1,146 @@
+name: CI
+
+on:
+  #release:
+    #types: [created] # 表示在创建新的 Release 时触发
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      xgoversion:
+        description: '自定义docker版xgo镜像地址和标签[保持默认值即可，谨慎填写]，如：ghcr.io/grbhq/xgo:go-1.20.0'
+        required: true
+        default: 'techknowlogick/xgo:latest'
+      pushartifact:
+        description: '是否拆分上传二进制文件到artifact，不勾选不拆分上传，默认不拆分'
+        type: boolean
+        required: true
+        default: 'false'
+      pushrelease:
+        description: '是否发布release，不勾选不发布，默认发布'
+        type: boolean
+        required: true
+        default: 'true'
+      forcedtag:
+        description: 'tag标签重复时是否强制覆盖，勾选后自动覆盖，默认关闭'
+        type: boolean
+        required: true
+        default: 'false'
+      tag:
+        description: '输入tag版本号，如1.0'
+        required: true
+        default: ''
+
+env:
+  WORK_DIR: "QLTools"
+
+jobs:
+  build:
+    name: Build binary CI
+    runs-on: ubuntu-latest
+    outputs: 
+      file_lists: ${{ steps.filenames.outputs.file_lists }}
+    
+    permissions: write-all
+    
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go environment
+        uses: actions/setup-go@v3
+        with:
+          cache: true
+          go-version: '1.20'
+      
+      # 利用xgo交叉编译二进制文件 # 仓库地址：https://github.com/techknowlogick/xgo
+      - name: Build go binary file
+        run: |
+          mkdir dist-$WORK_DIR && cd dist-$WORK_DIR
+          docker pull ${{ github.event.inputs.xgoversion }}
+          go install src.techknowlogick.com/xgo@latest
+          xgo -ldflags '-s -w' -out $WORK_DIR --targets=linux/*,windows/386,windows/amd64,darwin/amd64,darwin/arm64 github.com/${{ github.repository }}
+          cd .. && ls -al ./dist-$WORK_DIR
+      
+      # 打包上传二进制文件到artifact，默认90天有效期
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.WORK_DIR }}-${{ github.run_number }}
+          path: dist-${{ env.WORK_DIR }}/
+      
+      # 检测输入的tag版本格式[如：v1.2.0；0.1；0.5.6；2.20.100]均可行
+      - name: check tag_version
+        if: ${{ github.event.inputs.pushrelease == 'true' }}
+        id: checktag
+        run: |
+          if echo "${{ github.event.inputs.tag }}" | grep -P "^(?!v0+(\.0+)*$)v?\d+(\.\d+)+$"; then
+            echo "The version ${{ github.event.inputs.tag }} is formatted correctly"
+            echo "runnable=true" >> $GITHUB_OUTPUT
+          else
+            echo "The version ${{ github.event.inputs.tag }} is malformed"
+            exit 0
+          fi
+      
+      # 强制推送已存在的tag
+      - name: forced tag
+        if: ${{ github.event.inputs.pushrelease == 'true' && github.event.inputs.forcedtag == 'true' && steps.checktag.outputs.runnable == 'true' }}
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -f ${{ github.event.inputs.tag }}
+          git push origin -f ${{ github.event.inputs.tag }}
+      
+      # 上传二进制文件到release
+      - name: Upload binaries to release
+        if: ${{ github.event.inputs.pushrelease == 'true' && steps.checktag.outputs.runnable == 'true' }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist-${{ env.WORK_DIR }}/*
+          file_glob: true  # 多文件上传
+          tag: ${{ github.event.inputs.tag }}
+          release_name: ${{ github.event.inputs.tag }}
+          prerelease: false
+          overwrite: true
+          body: "- This is my release text"
+
+      # 获取二进制文件列表
+      - name: binary file lists
+        id: filenames
+        run: |
+          folder_path="dist-$WORK_DIR"
+          file_names=$(find "$folder_path" -type f -exec basename {} \; | sed 's/.*/"&"/' | paste -sd, - | sed -e '1s/^/\[/' -e '$s/$/\]/')
+          echo "file_lists=$file_names" >> $GITHUB_OUTPUT
+          
+  artifact:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.pushartifact == 'true' }}
+    permissions: write-all
+    strategy:
+      fail-fast: true
+      max-parallel: 6
+      matrix:
+        lists: ${{ fromJson(needs.build.outputs.file_lists) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      # 下载artifact中的文件到本地
+      - name: download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.WORK_DIR }}-${{ github.run_number }}
+          path: dist-${{ env.WORK_DIR }}/
+
+      # 单个依次上传二进制文件到artifact，默认90天有效期
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.lists }}
+          path: dist-${{ env.WORK_DIR }}/${{ matrix.lists }}
+
+
+      

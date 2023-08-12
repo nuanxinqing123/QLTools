@@ -18,47 +18,89 @@ on:
         description: 'Log level'   
         required: true
         default: 'warning'
-      tags:
+      pushdocker:
+        description: '镜像是否推送到docker仓库，不勾选不推送，默认启用'
+        type: boolean
         required: true
-        description: '请填写镜像版本号，如1.0'
+        default: 'true'
+      pushghcr:
+        description: '镜像是否推送到GHCR仓库，不勾选不推送，默认启用'
+        type: boolean
+        required: true
+        default: 'true'
+      latests:
+        description: '镜像是否启用latest标签，不勾选不启用，默认启用'
+        type: boolean
+        required: true
+        default: 'true'
+      tags:
+        description: 'tags：请填写镜像版本号，如1.0'
+        required: true
+        default: ''
 
 jobs:
   buildx:
     runs-on: ubuntu-latest
+    permissions: write-all
+    
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v2
-      - name: Get current date
-        id: date
-        run: echo "::set-output name=today::$(date +'%Y-%m-%d')"
+        uses: actions/checkout@v3
       -
         name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
       -
         name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
       -
         name: Available platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
       -
         name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ secrets.DOCKER_USERNAME }}  # 去secrets中添加
+          password: ${{ secrets.DOCKER_PASSWORD }}  # 去secrets中添加
+      - 
+        name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: image Name change
+        id: read-docker-image-identifiers   # 去secrets中添加DOCKER_IMAGENAME 镜像名称，自动字母大写转换小写。
+        run: |
+          echo DOCKER_IMAGENAME=$(echo ${{ secrets.DOCKER_IMAGENAME }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
+      -
+        name: Extract metadata (tags, labels) for Docker
+        if: ${{ github.event.inputs.pushdocker == 'true' || github.event.inputs.pushghcr == 'true' }}
+        id: meta   # 处理并输出镜像tag版本号[docker/metadata-action@master]
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            name=${{ secrets.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGENAME }},enable=${{ github.event.inputs.pushdocker == 'true' }}
+            name=ghcr.io/${{ github.repository_owner }}/${{ env.DOCKER_IMAGENAME }},enable=${{ github.event.inputs.pushghcr == 'true' }}
+          # generate Docker tags based on the following events/attributes   # 推送到GitHub packages仓库，需要打开『 https://github.com/settings/tokens/new?scopes=write:packages 』创建一个 PAT，勾选 write:packages 权限，才可使用。
+          # metadata 使用说明：https://github.com/docker/metadata-action
+          #   nightly, master, pr-2, 1.2.3, 1.2, 1
+          tags: |
+            type=raw,value=${{ github.event.inputs.tags }},priority=1000
+            type=raw,value=latest,enable=${{ github.event.inputs.latests == 'true' }}
       -
         name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .	# 工作目录
-          file: ./Dockerfile	#构建文件路径
-# 所需要的体系结构，可以在 Available platforms 步骤中获取所有的可用架构
+          file: ./Dockerfile    #构建文件路径
+# 所需要的体系结构，可以在 Available platforms 步骤中获取所有的可用架构【前提：基础镜像必须要有对应的架构，否则无法构建】
           platforms: linux/amd64,linux/arm64/v8,linux/arm/v7
-# 镜像推送时间
-          push: ${{ github.event_name != 'pull_request' }}
-# 给清单打上多个标签
-          tags: |
-            nuanxinqing123/qltools:latest
-            nuanxinqing123/qltools:${{github.event.inputs.tags}}
+          #platforms可选架构: linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4,linux/arm64,linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/mips64le,linux/mips64,linux/arm/v7,linux/arm/v6
+# 镜像推送
+          push: ${{ github.event.inputs.pushdocker == 'true' || github.event.inputs.pushghcr == 'true' }}
+# 给清单打上多个tags标签  
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
