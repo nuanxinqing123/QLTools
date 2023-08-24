@@ -134,6 +134,10 @@ Pro版主页：https://pro.6b7.org
 
 使用说明书：https://www.yuque.com/sevesum/qk1dd7
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=nuanxinqing123/QLTools&type=Date)](https://star-history.com/#nuanxinqing123/QLTools&Date)
+
 ## 📷演示图
 
 ![QQ截图20220511154438.png](https://pic.6b7.xyz/2022/05/11/25a5e41170f5f.png)
