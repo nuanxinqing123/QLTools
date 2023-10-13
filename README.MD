@@ -127,13 +127,6 @@ go-bindata -o=bindata/bindata.go -pkg=bindata ./assets/...
 # 前端自行修改教程：https://6b7.org/518.html
 ```
 
-## 💰Pro版本
-如果 青龙Tools 无法满足你的需求，那么不妨看看它的 Pro 版本
-
-Pro版主页：https://pro.6b7.org
-
-使用说明书：https://www.yuque.com/sevesum/qk1dd7
-
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=nuanxinqing123/QLTools&type=Date)](https://star-history.com/#nuanxinqing123/QLTools&Date)
