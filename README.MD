@@ -7,6 +7,7 @@
 
 <h1 align="center">青龙Tools</h1>
 <p><a href="https://github.com/nuanxinqing123/QLTools#%E6%BC%94%E7%A4%BA%E5%9B%BE">查看演示图</a></p>
+<p>V2版本正在开发中: <a href="https://github.com/nuanxinqing123/QLToolsV2">点击前往</a></p>
 
 ## 🍭功能介绍
 - 理论支持青龙全版本
